@@ -8,6 +8,9 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Mengizinkan blocking prerender untuk Next.js 16 Cache Components
+export const instant = false;
+
 export async function generateStaticParams() {
   const { data: artikel } = await supabase.from("artikel").select("id");
   
