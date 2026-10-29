@@ -1,17 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Menu, X, ShieldCheck } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   if (pathname?.startsWith("/admin")) {
     return null;
   }
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } else {
+      e.preventDefault();
+      router.push(`/#${id}`);
+    }
+  };
 
   return (
     <nav className="bg-[#2C1810] text-amber-100 sticky top-0 z-50 shadow-md border-b border-amber-900/40">
@@ -30,12 +46,20 @@ export default function Navbar() {
             <Link href="/" className="hover:text-amber-400 transition-colors">
               Beranda
             </Link>
-            <Link href="/#profil-prodi" className="hover:text-amber-400 transition-colors">
+            <a
+              href="/#profil-prodi"
+              onClick={(e) => handleNavClick(e, "profil-prodi")}
+              className="hover:text-amber-400 transition-colors cursor-pointer"
+            >
               Profil Prodi
-            </Link>
-            <Link href="/#profil-himpunan" className="hover:text-amber-400 transition-colors">
+            </a>
+            <a
+              href="/#profil-himpunan"
+              onClick={(e) => handleNavClick(e, "profil-himpunan")}
+              className="hover:text-amber-400 transition-colors cursor-pointer"
+            >
               Profil Himpunan
-            </Link>
+            </a>
             <Link href="/berita" className="hover:text-amber-400 transition-colors">
               Berita & Kegiatan
             </Link>
@@ -64,12 +88,26 @@ export default function Navbar() {
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Beranda
           </Link>
-          <Link href="/#profil-prodi" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
+          <a
+            href="/#profil-prodi"
+            onClick={(e) => {
+              setIsOpen(false);
+              handleNavClick(e, "profil-prodi");
+            }}
+            className="block py-2 hover:text-amber-400 cursor-pointer"
+          >
             Profil Prodi
-          </Link>
-          <Link href="/#profil-himpunan" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
+          </a>
+          <a
+            href="/#profil-himpunan"
+            onClick={(e) => {
+              setIsOpen(false);
+              handleNavClick(e, "profil-himpunan");
+            }}
+            className="block py-2 hover:text-amber-400 cursor-pointer"
+          >
             Profil Himpunan
-          </Link>
+          </a>
           <Link href="/berita" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Berita & Kegiatan
           </Link>
