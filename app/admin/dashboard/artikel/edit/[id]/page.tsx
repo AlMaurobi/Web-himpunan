@@ -7,6 +7,8 @@ import { compressImage } from "@/lib/utils/image-compressor";
 import { ArrowLeft, Upload, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default function EditArtikelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
@@ -28,11 +30,9 @@ export default function EditArtikelPage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     async function loadData() {
-      // Load Categories
       const { data: catData } = await supabase.from("categories").select("*");
       if (catData) setCategories(catData);
 
-      // Load Article Detail
       const { data: artData } = await supabase.from("articles").select("*").eq("id", id).single();
       if (artData) {
         setTitle(artData.title || "");
@@ -55,7 +55,6 @@ export default function EditArtikelPage({ params }: { params: Promise<{ id: stri
     try {
       let coverImageUrl = currentCoverUrl;
 
-      // Jika memilih foto poster baru, unggah & hapus foto lama dari storage
       if (file) {
         if (currentCoverUrl) {
           const oldFileName = currentCoverUrl.split("/").pop();
