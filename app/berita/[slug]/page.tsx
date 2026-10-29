@@ -1,7 +1,6 @@
-﻿import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
 import { notFound } from "next/navigation";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { Calendar, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
@@ -25,7 +24,6 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-stone-800">
-      <Navbar />
 
       <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 w-full">
         <Link href="/berita" className="inline-flex items-center gap-2 text-xs font-semibold text-stone-600 hover:text-amber-900">
