@@ -25,12 +25,20 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Menu */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 text-xs font-semibold">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Beranda</Link>
-            <Link href="/#profil-prodi" className="hover:text-amber-400 transition-colors">Profil Prodi</Link>
-            <Link href="/#profil-himpunan" className="hover:text-amber-400 transition-colors">Profil Himpunan</Link>
-            <Link href="/berita" className="hover:text-amber-400 transition-colors">Berita & Kegiatan</Link>
+            <Link href="/" className="hover:text-amber-400 transition-colors">
+              Beranda
+            </Link>
+            <Link href="/#profil-prodi" className="hover:text-amber-400 transition-colors">
+              Profil Prodi
+            </Link>
+            <Link href="/#profil-himpunan" className="hover:text-amber-400 transition-colors">
+              Profil Himpunan
+            </Link>
+            <Link href="/berita" className="hover:text-amber-400 transition-colors">
+              Berita & Kegiatan
+            </Link>
             <Link
               href="/admin/login"
               className="px-4 py-2 bg-amber-800 hover:bg-amber-700 text-amber-100 rounded-xl transition-all font-bold flex items-center gap-1.5 border border-amber-700/60 shadow-xs"
@@ -53,10 +61,18 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden bg-[#22120C] border-b border-amber-900/50 px-4 pt-2 pb-4 space-y-2 text-xs font-semibold">
-          <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">Beranda</Link>
-          <Link href="/#profil-prodi" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">Profil Prodi</Link>
-          <Link href="/#profil-himpunan" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">Profil Himpunan</Link>
-          <Link href="/berita" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">Berita & Kegiatan</Link>
+          <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
+            Beranda
+          </Link>
+          <Link href="/#profil-prodi" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
+            Profil Prodi
+          </Link>
+          <Link href="/#profil-himpunan" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
+            Profil Himpunan
+          </Link>
+          <Link href="/berita" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
+            Berita & Kegiatan
+          </Link>
           <Link
             href="/admin/login"
             onClick={() => setIsOpen(false)}

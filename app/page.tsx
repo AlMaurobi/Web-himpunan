@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
 import { ArrowRight, BookOpen, Award, Newspaper, Users, Calendar } from "lucide-react";
