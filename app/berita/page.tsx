@@ -1,8 +1,6 @@
 ﻿import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
 import { Newspaper, Calendar, ArrowRight, Image as ImageIcon } from "lucide-react";
 
 export const instant = false;
@@ -19,7 +17,7 @@ export default async function BeritaListPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-stone-800">
-      <Navbar />
+      
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 w-full">
         <div>
@@ -73,7 +71,8 @@ export default async function BeritaListPage() {
         )}
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
+

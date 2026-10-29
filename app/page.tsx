@@ -1,8 +1,6 @@
 ﻿import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
 import { ArrowRight, BookOpen, Award, Newspaper, Users, Calendar } from "lucide-react";
 
 export const instant = false;
@@ -24,7 +22,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-stone-800">
-      <Navbar />
+      
 
       {/* Hero Section */}
       <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full text-center space-y-6">
@@ -146,7 +144,8 @@ export default async function HomePage() {
         )}
       </section>
 
-      <Footer />
+      
     </div>
   );
 }
+
