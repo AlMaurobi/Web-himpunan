@@ -14,17 +14,22 @@ export default function Navbar() {
     return null;
   }
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const scrollToSection = (id: string) => {
     if (pathname === "/") {
-      e.preventDefault();
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
       } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        // Fallback jika ID berada di dalam child component
+        const headers = Array.from(document.querySelectorAll("h1, h2, h3, section, div"));
+        const target = headers.find((h) =>
+          h.textContent?.toLowerCase().includes(id.replace("profil-", ""))
+        );
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth" });
+        }
       }
     } else {
-      e.preventDefault();
       router.push(`/#${id}`);
     }
   };
@@ -46,20 +51,20 @@ export default function Navbar() {
             <Link href="/" className="hover:text-amber-400 transition-colors">
               Beranda
             </Link>
-            <a
-              href="/#profil-prodi"
-              onClick={(e) => handleNavClick(e, "profil-prodi")}
-              className="hover:text-amber-400 transition-colors cursor-pointer"
+            <button
+              type="button"
+              onClick={() => scrollToSection("profil-prodi")}
+              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold"
             >
               Profil Prodi
-            </a>
-            <a
-              href="/#profil-himpunan"
-              onClick={(e) => handleNavClick(e, "profil-himpunan")}
-              className="hover:text-amber-400 transition-colors cursor-pointer"
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection("profil-himpunan")}
+              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold"
             >
               Profil Himpunan
-            </a>
+            </button>
             <Link href="/berita" className="hover:text-amber-400 transition-colors">
               Berita & Kegiatan
             </Link>
@@ -74,6 +79,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-lg text-amber-200 hover:text-white hover:bg-amber-900/50"
           >
@@ -88,26 +94,26 @@ export default function Navbar() {
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Beranda
           </Link>
-          <a
-            href="/#profil-prodi"
-            onClick={(e) => {
+          <button
+            type="button"
+            onClick={() => {
               setIsOpen(false);
-              handleNavClick(e, "profil-prodi");
+              scrollToSection("profil-prodi");
             }}
-            className="block py-2 hover:text-amber-400 cursor-pointer"
+            className="block w-full text-left py-2 hover:text-amber-400 cursor-pointer font-semibold"
           >
             Profil Prodi
-          </a>
-          <a
-            href="/#profil-himpunan"
-            onClick={(e) => {
+          </button>
+          <button
+            type="button"
+            onClick={() => {
               setIsOpen(false);
-              handleNavClick(e, "profil-himpunan");
+              scrollToSection("profil-himpunan");
             }}
-            className="block py-2 hover:text-amber-400 cursor-pointer"
+            className="block w-full text-left py-2 hover:text-amber-400 cursor-pointer font-semibold"
           >
             Profil Himpunan
-          </a>
+          </button>
           <Link href="/berita" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Berita & Kegiatan
           </Link>
