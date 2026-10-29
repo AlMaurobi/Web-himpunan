@@ -1,10 +1,17 @@
 ﻿"use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MessageSquare, MapPin, ExternalLink } from "lucide-react";
 
 export default function Footer() {
+  const [year, setYear] = useState<number>(2026);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="bg-[#2A1810] text-[#FAF7F2] border-t border-amber-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -109,7 +116,7 @@ export default function Footer() {
 
         {/* Bottom Bar Copyright */}
         <div className="mt-12 pt-6 border-t border-amber-900/40 text-center text-xs text-stone-400 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} HIMAPEBSI & Pendidikan Bahasa dan Sastra Indonesia. All rights reserved.</p>
+          <p>© {year} HIMAPEBSI & Pendidikan Bahasa dan Sastra Indonesia. All rights reserved.</p>
           <p className="text-[11px] text-amber-200/60 font-medium">Warm Earth Theme • PBSI UTM</p>
         </div>
       </div>
