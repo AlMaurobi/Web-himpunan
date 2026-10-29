@@ -25,7 +25,7 @@ export default async function HomePage() {
       
 
       {/* Hero Section */}
-      <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full text-center space-y-6">
+      <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full text-center space-y-6" id="profil-prodi" className="scroll-mt-20">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-semibold shadow-sm">
           <Award className="w-4 h-4 text-amber-700" />
           <span>Program Studi Akreditasi {prodi?.akreditasi || "Unggul"}</span>
@@ -61,7 +61,7 @@ export default async function HomePage() {
       </section>
 
       {/* Ringkasan Prodi & Himpunan */}
-      <section className="py-12 bg-amber-100/40 border-y border-amber-200/60">
+      <section className="py-12 bg-amber-100/40 border-y border-amber-200/60" id="profil-prodi" className="scroll-mt-20" id="profil-himpunan" className="scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-6 bg-white border border-stone-200/80 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center mb-4 border border-amber-300/60">
@@ -98,7 +98,7 @@ export default async function HomePage() {
       </section>
 
       {/* Berita Terbaru */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8" id="profil-prodi" className="scroll-mt-20">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-stone-900">Berita & Kegiatan Terbaru</h2>

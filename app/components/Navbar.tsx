@@ -15,19 +15,11 @@ export default function Navbar() {
   }
 
   const scrollToSection = (id: string) => {
+    setIsOpen(false);
     if (pathname === "/") {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
-      } else {
-        // Fallback jika ID berada di dalam child component
-        const headers = Array.from(document.querySelectorAll("h1, h2, h3, section, div"));
-        const target = headers.find((h) =>
-          h.textContent?.toLowerCase().includes(id.replace("profil-", ""))
-        );
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth" });
-        }
       }
     } else {
       router.push(`/#${id}`);
@@ -46,7 +38,6 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 text-xs font-semibold">
             <Link href="/" className="hover:text-amber-400 transition-colors">
               Beranda
@@ -77,18 +68,16 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg text-amber-200 hover:text-white hover:bg-amber-900/50"
+            className="md:hidden p-2 rounded-lg text-amber-200 hover:text-white"
           >
             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden bg-[#22120C] border-b border-amber-900/50 px-4 pt-2 pb-4 space-y-2 text-xs font-semibold">
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
@@ -96,21 +85,15 @@ export default function Navbar() {
           </Link>
           <button
             type="button"
-            onClick={() => {
-              setIsOpen(false);
-              scrollToSection("profil-prodi");
-            }}
-            className="block w-full text-left py-2 hover:text-amber-400 cursor-pointer font-semibold"
+            onClick={() => scrollToSection("profil-prodi")}
+            className="block w-full text-left py-2 hover:text-amber-400 font-semibold"
           >
             Profil Prodi
           </button>
           <button
             type="button"
-            onClick={() => {
-              setIsOpen(false);
-              scrollToSection("profil-himpunan");
-            }}
-            className="block w-full text-left py-2 hover:text-amber-400 cursor-pointer font-semibold"
+            onClick={() => scrollToSection("profil-himpunan")}
+            className="block w-full text-left py-2 hover:text-amber-400 font-semibold"
           >
             Profil Himpunan
           </button>
