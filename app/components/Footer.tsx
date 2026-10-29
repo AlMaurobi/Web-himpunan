@@ -3,14 +3,19 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { MessageSquare, MapPin, ExternalLink } from "lucide-react";
 
 export default function Footer() {
+  const pathname = usePathname();
   const [year, setYear] = useState<number>(2026);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
+
+  // Sembunyikan Footer publik jika berada di rute admin
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <footer className="bg-[#2A1810] text-[#FAF7F2] border-t border-amber-900/40">
