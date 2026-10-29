@@ -1,7 +1,55 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { createClient } from "@supabase/supabase-js";
 import { GraduationCap, Target, Award, UserCheck, ArrowLeft } from "lucide-react";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 export default function ProfilProdiPage() {
+  const [prodiData, setProdiData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProdi() {
+      try {
+        const { data, error } = await supabase.from("profil_prodi").select("*").maybeSingle();
+        if (!error && data) {
+          setProdiData(data);
+        }
+      } catch (e) {
+        console.error("Gagal memuat profil prodi:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProdi();
+  }, []);
+
+  // Nilai dinamis dengan fallback jika database belum terisi
+  const korprodiNama = prodiData?.nama_korprodi || "Koordinator Program Studi";
+  const korprodiJabatan = prodiData?.jabatan_korprodi || "Prodi PBSI FKIP UTM";
+  const sambutan = prodiData?.sambutan || "Selamat datang di laman resmi Program Studi Pendidikan Bahasa dan Sastra Indonesia (PBSI) Universitas Trunojoyo Madura. Kami berkomitmen untuk menyelenggarakan pendidikan berkualitas tinggi yang mengintegrasikan keilmuan bahasa, sastra, dan pedagogi dengan nilai-nilai kebudayaan serta perkembangan teknologi digital.";
+  const visi = prodiData?.visi || '"Menjadi Program Studi Pendidikan Bahasa dan Sastra Indonesia yang unggul, berdaya saing nasional, serta berkarakter kebudayaan pada tahun 2030."';
+  
+  let misiList: string[] = [
+    "Menyelenggarakan pendidikan dan pembelajaran PBSI yang inovatif dan berbasis teknologi.",
+    "Melaksanakan penelitian bidang kebahasaan, kesastraan, dan pengajarannya.",
+    "Menyelenggarakan pengabdian masyarakat berbasis keilmuan dan kearifan lokal.",
+    "Menjalin kemitraan strategis dengan institusi pendidikan dan lembaga kebudayaan."
+  ];
+
+  if (prodiData?.misi) {
+    misiList = Array.isArray(prodiData.misi) 
+      ? prodiData.misi 
+      : typeof prodiData.misi === "string" 
+      ? prodiData.misi.split("\n").filter((item: string) => item.trim().length > 0)
+      : misiList;
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 py-12 px-4 md:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
@@ -18,22 +66,26 @@ export default function ProfilProdiPage() {
             <GraduationCap className="w-4 h-4" /> Program Studi PBSI
           </div>
           <h1 className="text-2xl md:text-4xl font-black text-white">
-            Profil Pendidikan Bahasa & Sastra Indonesia
+            {prodiData?.judul_halaman || "Profil Pendidikan Bahasa & Sastra Indonesia"}
           </h1>
           <p className="text-xs md:text-sm text-stone-300 max-w-3xl leading-relaxed">
-            Fakultas Keguruan dan Ilmu Pendidikan — Universitas Trunojoyo Madura
+            {prodiData?.subjudul || "Fakultas Keguruan dan Ilmu Pendidikan — Universitas Trunojoyo Madura"}
           </p>
         </div>
 
         {/* Korprodi & Sambutan */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-stone-200 shadow-xs grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           <div className="flex flex-col items-center text-center space-y-3 border-b md:border-b-0 md:border-r border-stone-200 pb-6 md:pb-0 md:pr-6">
-            <div className="w-28 h-28 rounded-full bg-amber-100 border-2 border-amber-800 flex items-center justify-center text-amber-900 font-bold text-2xl">
-              PBSI
+            <div className="w-28 h-28 rounded-full bg-amber-100 border-2 border-amber-800 flex items-center justify-center text-amber-900 font-bold text-2xl overflow-hidden">
+              {prodiData?.foto_korprodi ? (
+                <img src={prodiData.foto_korprodi} alt={korprodiNama} className="w-full h-full object-cover" />
+              ) : (
+                "PBSI"
+              )}
             </div>
             <div>
-              <h3 className="font-bold text-stone-900 text-sm md:text-base">Koordinator Program Studi</h3>
-              <p className="text-xs text-amber-800 font-medium mt-0.5">Prodi PBSI FKIP UTM</p>
+              <h3 className="font-bold text-stone-900 text-sm md:text-base">{korprodiNama}</h3>
+              <p className="text-xs text-amber-800 font-medium mt-0.5">{korprodiJabatan}</p>
             </div>
           </div>
           <div className="md:col-span-2 space-y-3">
@@ -41,8 +93,8 @@ export default function ProfilProdiPage() {
               <UserCheck className="w-5 h-5 text-amber-800" />
               Sambutan Koordinator Program Studi
             </h2>
-            <p className="text-xs md:text-sm text-stone-600 leading-relaxed">
-              Selamat datang di laman resmi Program Studi Pendidikan Bahasa dan Sastra Indonesia (PBSI) Universitas Trunojoyo Madura. Kami berkomitmen untuk menyelenggarakan pendidikan berkualitas tinggi yang mengintegrasikan keilmuan bahasa, sastra, dan pedagogi dengan nilai-nilai kebudayaan serta perkembangan teknologi digital.
+            <p className="text-xs md:text-sm text-stone-600 leading-relaxed whitespace-pre-line">
+              {sambutan}
             </p>
           </div>
         </div>
@@ -55,7 +107,7 @@ export default function ProfilProdiPage() {
               Visi Program Studi
             </div>
             <p className="text-xs md:text-sm text-stone-700 leading-relaxed bg-amber-50/50 p-4 rounded-xl border border-amber-100">
-              "Menjadi Program Studi Pendidikan Bahasa dan Sastra Indonesia yang unggul, berdaya saing nasional, serta berkarakter kebudayaan pada tahun 2030."
+              {visi}
             </p>
           </div>
 
@@ -65,10 +117,9 @@ export default function ProfilProdiPage() {
               Misi Program Studi
             </div>
             <ul className="text-xs md:text-sm text-stone-700 space-y-2 list-disc list-inside leading-relaxed">
-              <li>Menyelenggarakan pendidikan dan pembelajaran PBSI yang inovatif dan berbasis teknologi.</li>
-              <li>Melaksanakan penelitian bidang kebahasaan, kesastraan, dan pengajarannya.</li>
-              <li>Menyelenggarakan pengabdian masyarakat berbasis keilmuan dan kearifan lokal.</li>
-              <li>Menjalin kemitraan strategis dengan institusi pendidikan dan lembaga kebudayaan.</li>
+              {misiList.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
             </ul>
           </div>
         </div>
