@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Tag, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import ShareButtons from "@/app/components/ShareButtons";
 import { notFound } from "next/navigation";
 
@@ -8,9 +8,17 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const { data: artikel } = await supabase.from("artikel").select("id");
-  return (artikel || []).map((item) => ({ id: item.id.toString() }));
+  
+  // Wajib mengembalikan minimal 1 result untuk Next.js 16 Cache Components
+  if (!artikel || artikel.length === 0) {
+    return [{ id: "1" }];
+  }
+
+  return artikel.map((item) => ({ id: item.id.toString() }));
 }
 
 export default async function DetailArtikelPage({
@@ -36,7 +44,6 @@ export default async function DetailArtikelPage({
     year: "numeric",
   });
 
-  // Renderer paragraf & auto-link detector
   const renderFormattedContent = (content: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return content.split("\n").map((paragraph, pIdx) => {
