@@ -1,86 +1,139 @@
 ﻿"use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
   Users,
   Building2,
+  Menu,
+  X,
   LogOut,
-  Globe,
+  GraduationCap
 } from "lucide-react";
 
 export default function AdminSidebar() {
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
-  };
-
-  const navItems = [
-    { label: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
-    { label: "Kelola Artikel", href: "/admin/dashboard/artikel", icon: FileText },
-    { label: "Pengurus & Kabinet", href: "/admin/dashboard/kabinet", icon: Users },
-    { label: "Profil Prodi", href: "/admin/dashboard/prodi", icon: Building2 },
+  const menuItems = [
+    {
+      label: "Overview",
+      href: "/admin/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Kelola Artikel",
+      href: "/admin/dashboard/artikel",
+      icon: FileText,
+    },
+    {
+      label: "Pengurus & Kabinet",
+      href: "/admin/dashboard/kabinet",
+      icon: Users,
+    },
+    {
+      label: "Profil Prodi",
+      href: "/admin/dashboard/prodi",
+      icon: Building2,
+    },
   ];
 
   return (
-    <aside className="w-64 bg-[#2A1810] border-r border-amber-900/40 flex flex-col justify-between p-4 shrink-0 text-amber-50">
-      <div>
-        <div className="px-3 py-4 mb-6 border-b border-amber-900/40 flex items-center gap-3">
-          <img src="/logo.png" alt="Logo HIMAPEBSI" className="w-9 h-9 object-contain rounded-xl" />
+    <>
+      {/* Mobile Top Navbar (Tampil hanya di Layar HP < md) */}
+      <div className="md:hidden bg-[#2A1810] text-[#FAF7F2] p-4 flex items-center justify-between sticky top-0 z-40 shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-amber-800/60 border border-amber-600/40 flex items-center justify-center text-amber-300">
+            <GraduationCap className="w-5 h-5" />
+          </div>
           <div>
-            <h2 className="font-extrabold text-white text-base leading-none">Admin Panel</h2>
-            <p className="text-[11px] text-amber-300/80 font-medium mt-1">HIMAPEBSI & Prodi</p>
+            <h2 className="font-extrabold text-sm leading-tight text-amber-100">Admin Panel</h2>
+            <p className="text-[10px] text-stone-400">HIMAPEBSI & Prodi</p>
           </div>
         </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 bg-stone-800/80 hover:bg-stone-700 text-stone-200 rounded-xl transition-all border border-stone-700/50"
+          aria-label="Toggle Navigation"
+        >
+          {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
 
-        <nav className="space-y-1.5">
-          {navItems.map((item) => {
+      {/* Dark Backdrop overlay saat menu mobile terbuka */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 md:hidden transition-opacity"
+        />
+      )}
+
+      {/* Sidebar Main Wrapper */}
+      <aside
+        className={`fixed md:static top-0 left-0 bottom-0 z-50 w-64 bg-[#2A1810] text-[#FAF7F2] flex flex-col border-r border-stone-800/80 shadow-2xl md:shadow-none transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* Sidebar Header */}
+        <div className="p-6 border-b border-stone-800/80 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-800/50 border border-amber-600/30 flex items-center justify-center text-amber-300 shadow-inner">
+              <GraduationCap className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="font-extrabold text-base text-amber-100 leading-tight">Admin Panel</h2>
+              <p className="text-xs text-stone-400">HIMAPEBSI & Prodi</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="md:hidden p-1.5 text-stone-400 hover:text-stone-100 rounded-lg"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Navigation Items */}
+        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+          {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive =
+              item.href === "/admin/dashboard"
+                ? pathname === "/admin/dashboard"
+                : pathname.startsWith(item.href);
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   isActive
-                    ? "bg-amber-800 text-white shadow-md shadow-amber-950/30"
-                    : "text-amber-200/80 hover:text-white hover:bg-amber-900/50"
+                    ? "bg-amber-900/80 text-amber-100 font-semibold shadow-md border border-amber-700/50"
+                    : "text-stone-300 hover:bg-stone-800/60 hover:text-stone-100"
                 }`}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className={`w-5 h-5 ${isActive ? "text-amber-300" : "text-stone-400"}`} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
-      </div>
 
-      <div className="space-y-2 pt-4 border-t border-amber-900/40">
-        <Link
-          href="/"
-          target="_blank"
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-amber-200/80 hover:text-white hover:bg-amber-900/50 transition-all"
-        >
-          <Globe className="w-5 h-5" />
-          <span>Lihat Web Publik</span>
-        </Link>
-
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-red-300 hover:text-red-100 hover:bg-red-950/50 transition-all text-left"
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Keluar (Logout)</span>
-        </button>
-      </div>
-    </aside>
+        {/* Footer / Keluar Dashboard */}
+        <div className="p-4 border-t border-stone-800/80">
+          <Link
+            href="/"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-400 hover:bg-red-950/40 hover:text-red-300 transition-all text-sm font-medium border border-transparent hover:border-red-900/40"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Ke Halaman Depan</span>
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 }
