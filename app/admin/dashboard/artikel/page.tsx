@@ -5,8 +5,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Plus, FileText, Image as ImageIcon, Calendar, Edit3, Trash2, Loader2 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 export default function ArtikelListPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +70,7 @@ export default function ArtikelListPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white border border-stone-200/80 rounded-2xl p-12 text-center text-stone-500 shadow-sm flex items-center justify-center gap-2">
+        <div className="bg-[#FAF7F2] border border-stone-200/80 rounded-2xl p-12 text-center text-stone-500 shadow-sm flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-amber-800" />
           <span>Memuat data artikel...</span>
         </div>

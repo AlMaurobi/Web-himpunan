@@ -1,7 +1,5 @@
 ﻿import Link from "next/link";
-import { FileText, Users, Building2, Plus, ArrowRight } from "lucide-react";
-
-export const dynamic = "force-dynamic";
+import { FileText, Users, Building2, ArrowRight } from "lucide-react";
 
 export default function AdminOverviewPage() {
   return (
