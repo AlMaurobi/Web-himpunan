@@ -20,6 +20,11 @@ export default function Navbar() {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // Fallback jika elemen baru selesai dirender
+        setTimeout(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
       }
     } else {
       router.push(`/#${id}`);
