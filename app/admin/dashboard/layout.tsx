@@ -1,7 +1,7 @@
 ﻿import { Suspense } from "react";
 import AdminSidebar from "./AdminSidebar";
 
-export const instant = false;
+export const dynamic = "force-dynamic";
 
 export default function DashboardLayout({
   children,

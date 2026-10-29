@@ -5,6 +5,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Plus, FileText, Image as ImageIcon, Calendar, Edit3, Trash2, Loader2 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default function ArtikelListPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,6 @@ export default function ArtikelListPage() {
     setDeletingId(id);
 
     try {
-      // 1. Hapus file foto dari Supabase Storage jika ada
       if (coverImageUrl) {
         const fileName = coverImageUrl.split("/").pop();
         if (fileName) {
@@ -41,7 +42,6 @@ export default function ArtikelListPage() {
         }
       }
 
-      // 2. Hapus record dari database
       const { error } = await supabase.from("articles").delete().eq("id", id);
       if (error) throw error;
 
