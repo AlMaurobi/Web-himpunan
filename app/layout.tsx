@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -16,11 +17,15 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth">
       <body className="antialiased bg-[#FFFDF9] text-stone-800 flex flex-col min-h-screen">
-        <Navbar />
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
         <div className="flex-1">
           {children}
         </div>
-        <Footer />
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
       </body>
     </html>
   );
