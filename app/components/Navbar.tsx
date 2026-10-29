@@ -14,27 +14,15 @@ export default function Navbar() {
     return null;
   }
 
-  const navigateToSection = (sectionId: string) => {
+  const scrollToSection = (id: string) => {
     setIsOpen(false);
-
     if (pathname === "/") {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        // Fallback pencarian elemen berdasarkan isi teks
-        const keyword = sectionId === "profil-prodi" ? "prodi" : "himpunan";
-        const allElements = Array.from(document.querySelectorAll("section, div, h2, h3"));
-        const target = allElements.find((el) =>
-          el.textContent?.toLowerCase().includes(profil ) ||
-          el.textContent?.toLowerCase().includes(keyword)
-        );
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
-      router.push("/#" + sectionId);
+      router.push("/#" + id);
     }
   };
 
@@ -50,20 +38,21 @@ export default function Navbar() {
             </div>
           </Link>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 text-xs font-semibold">
             <Link href="/" className="hover:text-amber-400 transition-colors">
               Beranda
             </Link>
             <button
               type="button"
-              onClick={() => navigateToSection("profil-prodi")}
+              onClick={() => scrollToSection("profil-prodi")}
               className="hover:text-amber-400 transition-colors cursor-pointer font-semibold bg-transparent border-none p-0 text-amber-100"
             >
               Profil Prodi
             </button>
             <button
               type="button"
-              onClick={() => navigateToSection("profil-himpunan")}
+              onClick={() => scrollToSection("profil-himpunan")}
               className="hover:text-amber-400 transition-colors cursor-pointer font-semibold bg-transparent border-none p-0 text-amber-100"
             >
               Profil Himpunan
@@ -80,6 +69,7 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -90,6 +80,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden bg-[#22120C] border-b border-amber-900/50 px-4 pt-2 pb-4 space-y-2 text-xs font-semibold">
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
@@ -97,14 +88,14 @@ export default function Navbar() {
           </Link>
           <button
             type="button"
-            onClick={() => navigateToSection("profil-prodi")}
+            onClick={() => scrollToSection("profil-prodi")}
             className="block w-full text-left py-2 hover:text-amber-400 font-semibold bg-transparent border-none text-amber-100"
           >
             Profil Prodi
           </button>
           <button
             type="button"
-            onClick={() => navigateToSection("profil-himpunan")}
+            onClick={() => scrollToSection("profil-himpunan")}
             className="block w-full text-left py-2 hover:text-amber-400 font-semibold bg-transparent border-none text-amber-100"
           >
             Profil Himpunan
