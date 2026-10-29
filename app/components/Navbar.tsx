@@ -14,17 +14,27 @@ export default function Navbar() {
     return null;
   }
 
-  const scrollToSection = (id: string) => {
+  const handleScroll = (id: string) => {
     setIsOpen(false);
+
     if (pathname === "/") {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
+      // 1. Cari berdasarkan ID eksplisit
+      let element = document.getElementById(id);
+
+      // 2. Fallback: Cari berdasarkan kata kunci teks di dalam halaman
+      if (!element) {
+        const keyword = id === "profil-prodi" ? "prodi" : "himpunan";
+        const allElements = Array.from(document.querySelectorAll("section, div, h2, h3"));
+        element = allElements.find((el) =>
+          el.textContent?.toLowerCase().includes(`profil ${keyword}`) ||
+          el.textContent?.toLowerCase().includes(keyword)
+        ) as HTMLElement | null;
+      }
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
-        // Fallback jika elemen baru selesai dirender
-        setTimeout(() => {
-          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        window.scrollTo({ top: id === "profil-prodi" ? 500 : 1200, behavior: "smooth" });
       }
     } else {
       router.push(`/#${id}`);
@@ -43,21 +53,22 @@ export default function Navbar() {
             </div>
           </Link>
 
+          {/* Navigasi Desktop */}
           <div className="hidden md:flex items-center gap-6 text-xs font-semibold">
             <Link href="/" className="hover:text-amber-400 transition-colors">
               Beranda
             </Link>
             <button
               type="button"
-              onClick={() => scrollToSection("profil-prodi")}
-              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold"
+              onClick={() => handleScroll("profil-prodi")}
+              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold bg-transparent border-none p-0 text-amber-100"
             >
               Profil Prodi
             </button>
             <button
               type="button"
-              onClick={() => scrollToSection("profil-himpunan")}
-              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold"
+              onClick={() => handleScroll("profil-himpunan")}
+              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold bg-transparent border-none p-0 text-amber-100"
             >
               Profil Himpunan
             </button>
@@ -73,6 +84,7 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Tombol Mobile Menu */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -83,6 +95,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Dropdown Mobile */}
       {isOpen && (
         <div className="md:hidden bg-[#22120C] border-b border-amber-900/50 px-4 pt-2 pb-4 space-y-2 text-xs font-semibold">
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
@@ -90,15 +103,15 @@ export default function Navbar() {
           </Link>
           <button
             type="button"
-            onClick={() => scrollToSection("profil-prodi")}
-            className="block w-full text-left py-2 hover:text-amber-400 font-semibold"
+            onClick={() => handleScroll("profil-prodi")}
+            className="block w-full text-left py-2 hover:text-amber-400 font-semibold bg-transparent border-none text-amber-100"
           >
             Profil Prodi
           </button>
           <button
             type="button"
-            onClick={() => scrollToSection("profil-himpunan")}
-            className="block w-full text-left py-2 hover:text-amber-400 font-semibold"
+            onClick={() => handleScroll("profil-himpunan")}
+            className="block w-full text-left py-2 hover:text-amber-400 font-semibold bg-transparent border-none text-amber-100"
           >
             Profil Himpunan
           </button>
