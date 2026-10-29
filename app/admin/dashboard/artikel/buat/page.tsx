@@ -7,8 +7,6 @@ import { compressImage } from "@/lib/utils/image-compressor";
 import { ArrowLeft, Upload, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 export default function BuatArtikelPage() {
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState("");
