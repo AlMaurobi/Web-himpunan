@@ -34,11 +34,11 @@ export default function Footer() {
               />
               <div>
                 <h3 className="font-extrabold text-amber-100 text-lg leading-tight">HIMAPEBSI</h3>
-                <p className="text-xs text-amber-300/80 font-medium">FKIP Universitas Trunojoyo Madura</p>
+                <p className="text-xs text-amber-300/80 font-medium">FKIP Universitas Trunodjoyo Madura</p>
               </div>
             </div>
             <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
-              Wadah artikulasi, kreasi, dan pengabdian mahasiswa Pendidikan Bahasa dan Sastra Indonesia dalam mewujudkan insan akademis yang berbudaya dan berdaya saing.
+              Wadah, kreasi, dan pengabdian mahasiswa Pendidikan Bahasa dan Sastra Indonesia dalam mewujudkan insan akademis yang berbudaya dan berdaya saing.
             </p>
           </div>
 
@@ -50,7 +50,7 @@ export default function Footer() {
             <div className="space-y-3 text-xs sm:text-sm text-stone-300">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <p>Gedung Ormawa FKIP / Kampus Pendidikan Bahasa dan Sastra Indonesia, Universitas Trunojoyo Madura.</p>
+                <p>Gedung Fakultas Keguruan dan Ilmu Pendidikan, Universitas Trunodjoyo Madura..</p>
               </div>
               <div className="pt-2">
                 <a
@@ -122,7 +122,6 @@ export default function Footer() {
         {/* Bottom Bar Copyright */}
         <div className="mt-12 pt-6 border-t border-amber-900/40 text-center text-xs text-stone-400 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {year} HIMAPEBSI & Pendidikan Bahasa dan Sastra Indonesia. All rights reserved.</p>
-          <p className="text-[11px] text-amber-200/60 font-medium">Warm Earth Theme • PBSI UTM</p>
         </div>
       </div>
     </footer>

@@ -36,8 +36,12 @@ export default async function HomePage() {
         </h1>
 
         <p className="text-stone-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-          Mengabdi untuk Bahasa, Bersastra untuk Kemanusiaan. Portal resmi integrasi civitas akademika dan Himpunan Mahasiswa PBSI.
+          Menyatukan Bahasa, Memperdayakan Budaya. Portal resmi integrasi civitas akademika dan Himpunan Mahasiswa PBSI.
         </p>
+        <p className="text-stone-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          Portal resmi integrasi civitas akademika dan Himpunan Mahasiswa PBSI.
+        </p>
+
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
           <Link

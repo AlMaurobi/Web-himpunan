@@ -13,7 +13,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Laman_HIMAPEBSI",
-  description: "Portal Resmi HIMAPEBSI & Program Studi Pendidikan Bahasa dan Sastra Indonesia Universitas Trunojoyo Madura",
+  description: "Portal Resmi HIMAPEBSI & Program Studi Pendidikan Bahasa dan Sastra Indonesia Universitas Trunodjoyo Madura",
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
