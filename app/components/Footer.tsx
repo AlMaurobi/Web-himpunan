@@ -13,11 +13,14 @@ export default function Footer() {
   return (
     <footer className="bg-[#2C1810] text-stone-300 pt-12 pb-8 px-4 md:px-8 border-t border-stone-800">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-stone-800">
+        {/* Kolom 1: Logo & Deskripsi */}
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-900/50 flex items-center justify-center font-bold text-amber-400">
-              H
-            </div>
+            <img
+              src="/logo.png"
+              alt="Logo HIMAPEBSI"
+              className="w-10 h-10 object-contain"
+            />
             <div>
               <h3 className="font-black text-amber-100 text-sm tracking-wide">HIMAPEBSI</h3>
               <p className="text-[10px] text-amber-400/80">FKIP Universitas Trunojoyo Madura</p>
@@ -28,6 +31,7 @@ export default function Footer() {
           </p>
         </div>
 
+        {/* Kolom 2: Kontak & Sekretariat */}
         <div className="space-y-3">
           <h4 className="font-bold text-xs text-amber-200 tracking-wider uppercase">Sekretariat & Kontak</h4>
           <div className="space-y-2 text-xs text-stone-400">
@@ -47,10 +51,12 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Kolom 3: Media Sosial */}
         <div className="space-y-3">
           <h4 className="font-bold text-xs text-amber-200 tracking-wider uppercase">Linimasa Media Sosial</h4>
           <p className="text-xs text-stone-400">Ikuti kabar kegiatan terbaru dan konten edukasi kebahasaan kami:</p>
           <div className="space-y-1.5">
+            {/* Instagram */}
             <a
               href="https://instagram.com/utm_himapebsi"
               target="_blank"
@@ -62,6 +68,21 @@ export default function Footer() {
               </svg>
               <span>Instagram (@utm_himapebsi)</span>
             </a>
+
+            {/* TikTok */}
+            <a
+              href="https://tiktok.com/@pbsifip"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs text-stone-300 hover:text-amber-300 p-2 rounded-lg bg-stone-900/40 hover:bg-stone-900/80 border border-stone-800/60 transition-all"
+            >
+              <svg className="w-3.5 h-3.5 text-cyan-400 fill-current" viewBox="0 0 24 24">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.24-2.39.63-4.81 2.32-6.5 1.62-1.65 3.97-2.48 6.27-2.17.01 1.42-.01 2.83 0 4.25-.97-.13-1.97.08-2.8.58-1.07.63-1.76 1.83-1.74 3.08.01 1.09.52 2.12 1.38 2.79 1.05.81 2.47 1.02 3.73.57 1.22-.42 2.13-1.52 2.33-2.78.11-1.01.04-2.03.04-3.05V.02z"/>
+              </svg>
+              <span>TikTok (@pbsifip)</span>
+            </a>
+
+            {/* YouTube */}
             <a
               href="https://youtube.com/@pbsifip"
               target="_blank"
