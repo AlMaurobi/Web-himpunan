@@ -1,24 +1,11 @@
-﻿import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
-import { Suspense } from "react";
+import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-plus-jakarta",
-});
-
 export const metadata: Metadata = {
-  title: "Laman_HIMAPEBSI",
-  description: "Portal Resmi HIMAPEBSI & Program Studi Pendidikan Bahasa dan Sastra Indonesia Universitas Trunodjoyo Madura",
-  icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
-  },
+  title: "HIMAPEBSI - PBSI UTM",
+  description: "Website Resmi Himpunan Mahasiswa Pendidikan Bahasa dan Sastra Indonesia",
 };
 
 export default function RootLayout({
@@ -27,15 +14,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${plusJakarta.variable} font-sans`}>
-      <body className="bg-[#FAF7F2] text-stone-800 antialiased min-h-screen flex flex-col">
-        <Suspense fallback={<div className="h-16 bg-[#2A1810]" />}>
-          <Navbar />
-        </Suspense>
-        <main className="flex-1">{children}</main>
-        <Suspense fallback={null}>
-          <Footer />
-        </Suspense>
+    <html lang="id" className="scroll-smooth">
+      <body className="antialiased bg-[#FFFDF9] text-stone-800 flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );
