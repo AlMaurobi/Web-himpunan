@@ -1,30 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, X, ShieldCheck } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   if (pathname?.startsWith("/admin")) {
     return null;
   }
-
-  const scrollToSection = (id: string) => {
-    setIsOpen(false);
-    if (pathname === "/") {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    } else {
-      router.push("/#" + id);
-    }
-  };
 
   return (
     <nav className="bg-[#2C1810] text-amber-100 sticky top-0 z-50 shadow-md border-b border-amber-900/40">
@@ -38,25 +25,17 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Navigasi Desktop */}
           <div className="hidden md:flex items-center gap-6 text-xs font-semibold">
             <Link href="/" className="hover:text-amber-400 transition-colors">
               Beranda
             </Link>
-            <button
-              type="button"
-              onClick={() => scrollToSection("profil-prodi")}
-              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold bg-transparent border-none p-0 text-amber-100"
-            >
+            <Link href="/profil-prodi" className="hover:text-amber-400 transition-colors">
               Profil Prodi
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollToSection("profil-himpunan")}
-              className="hover:text-amber-400 transition-colors cursor-pointer font-semibold bg-transparent border-none p-0 text-amber-100"
-            >
+            </Link>
+            <Link href="/profil-himpunan" className="hover:text-amber-400 transition-colors">
               Profil Himpunan
-            </button>
+            </Link>
             <Link href="/berita" className="hover:text-amber-400 transition-colors">
               Berita & Kegiatan
             </Link>
@@ -69,7 +48,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Tombol Mobile */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -80,26 +59,18 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Menu Mobile */}
       {isOpen && (
         <div className="md:hidden bg-[#22120C] border-b border-amber-900/50 px-4 pt-2 pb-4 space-y-2 text-xs font-semibold">
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Beranda
           </Link>
-          <button
-            type="button"
-            onClick={() => scrollToSection("profil-prodi")}
-            className="block w-full text-left py-2 hover:text-amber-400 font-semibold bg-transparent border-none text-amber-100"
-          >
+          <Link href="/profil-prodi" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Profil Prodi
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollToSection("profil-himpunan")}
-            className="block w-full text-left py-2 hover:text-amber-400 font-semibold bg-transparent border-none text-amber-100"
-          >
+          </Link>
+          <Link href="/profil-himpunan" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Profil Himpunan
-          </button>
+          </Link>
           <Link href="/berita" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
             Berita & Kegiatan
           </Link>
