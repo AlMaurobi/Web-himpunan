@@ -1,13 +1,13 @@
 ﻿"use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/utils/image-compressor";
 import { ArrowLeft, Upload, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-export default function EditArtikelPage({ params }: { params: Promise<{ id: string }> }) {
+function EditArtikelForm({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
   const [title, setTitle] = useState("");
@@ -238,5 +238,20 @@ export default function EditArtikelPage({ params }: { params: Promise<{ id: stri
         </button>
       </form>
     </div>
+  );
+}
+
+export default function EditArtikelPage(props: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-white border border-stone-200/80 rounded-2xl p-12 text-center text-stone-500 shadow-sm flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-amber-800" />
+          <span>Memuat data artikel...</span>
+        </div>
+      }
+    >
+      <EditArtikelForm params={props.params} />
+    </Suspense>
   );
 }
