@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -11,7 +12,6 @@ import {
   Menu,
   X,
   LogOut,
-  GraduationCap
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -43,11 +43,18 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile Top Navbar (Tampil hanya di Layar HP < md) */}
+      {/* Mobile Top Navbar */}
       <div className="md:hidden bg-[#2A1810] text-[#FAF7F2] p-4 flex items-center justify-between sticky top-0 z-40 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-800/60 border border-amber-600/40 flex items-center justify-center text-amber-300">
-            <GraduationCap className="w-5 h-5" />
+          <div className="w-8 h-8 relative flex items-center justify-center shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Logo HIMAPEBSI"
+              width={32}
+              height={32}
+              className="object-contain w-auto h-8"
+              priority
+            />
           </div>
           <div>
             <h2 className="font-extrabold text-sm leading-tight text-amber-100">Admin Panel</h2>
@@ -63,7 +70,7 @@ export default function AdminSidebar() {
         </button>
       </div>
 
-      {/* Dark Backdrop overlay saat menu mobile terbuka */}
+      {/* Dark Backdrop Overlay di HP */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
@@ -80,8 +87,15 @@ export default function AdminSidebar() {
         {/* Sidebar Header */}
         <div className="p-6 border-b border-stone-800/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-800/50 border border-amber-600/30 flex items-center justify-center text-amber-300 shadow-inner">
-              <GraduationCap className="w-6 h-6" />
+            <div className="w-10 h-10 relative flex items-center justify-center shrink-0">
+              <Image
+                src="/logo.png"
+                alt="Logo HIMAPEBSI"
+                width={40}
+                height={40}
+                className="object-contain w-auto h-10"
+                priority
+              />
             </div>
             <div>
               <h2 className="font-extrabold text-base text-amber-100 leading-tight">Admin Panel</h2>
