@@ -23,11 +23,11 @@ export default function Footer() {
             />
             <div>
               <h3 className="font-black text-amber-100 text-sm tracking-wide">HIMAPEBSI</h3>
-              <p className="text-[10px] text-amber-400/80">FKIP Universitas Trunojoyo Madura</p>
+              <p className="text-[10px] text-amber-400/80">FKIP Universitas Trunodjoyo Madura</p>
             </div>
           </div>
           <p className="text-xs text-stone-400 leading-relaxed">
-            Wadah, kreasi, dan pengabdian mahasiswa Pendidikan Bahasa dan Sastra Indonesia dalam mewujudkan insan akademis yang berbudaya dan berdaya saing.
+            Wadah kreasi, dan pengabdian mahasiswa Pendidikan Bahasa dan Sastra Indonesia dalam mewujudkan insan akademis yang berbudaya dan berdaya saing.
           </p>
         </div>
 
@@ -37,7 +37,7 @@ export default function Footer() {
           <div className="space-y-2 text-xs text-stone-400">
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-              <span>Gedung Fakultas Keguruan dan Ilmu Pendidikan, Universitas Trunojoyo Madura.</span>
+              <span>Gedung Fakultas Keguruan dan Ilmu Pendidikan, Universitas Trunodjoyo Madura.</span>
             </div>
             <a
               href="https://wa.me/qr/HZL3ICPD5MVKK1?s=v"

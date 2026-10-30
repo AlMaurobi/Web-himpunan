@@ -29,7 +29,7 @@ export default function Navbar() {
             </div>
             <div>
               <span className="font-bold text-white tracking-wide block text-sm sm:text-base">HIMAPEBSI</span>
-              <span className="text-[10px] text-amber-300/80 block -mt-1">UTM Madura</span>
+              <span className="text-[10px] text-amber-300/80 block -mt-1">Pendidikan Bahasa dan Sastra Indonesia</span>
             </div>
           </Link>
 

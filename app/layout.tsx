@@ -5,7 +5,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
 export const metadata: Metadata = {
-  title: "HIMAPEBSI & Prodi PBSI - Universitas Trunojoyo Madura",
+  title: "HIMAPEBSI & Prodi PBSI - Universitas Trunodjoyo Madura",
   description: "Website Resmi Himpunan Mahasiswa & Program Studi PBSI UTM",
 };
 
