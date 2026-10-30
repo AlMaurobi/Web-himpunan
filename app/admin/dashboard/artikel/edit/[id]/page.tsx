@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { ArrowLeft, Save, Edit, Loader2 } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export default function EditArtikelPage() {
+function EditArtikelContent() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
@@ -27,8 +29,7 @@ export default function EditArtikelPage() {
     if (!id) return;
 
     async function fetchDetail() {
-      // Menggunakan ID string UUID secara langsung tanpa parseInt
-      const { data, error } = await supabase.from("articles").select("*").eq("id", id).maybeSingle();
+      const { data } = await supabase.from("articles").select("*").eq("id", id).maybeSingle();
 
       if (data) {
         setTitle(data.title || data.judul || "");
@@ -154,5 +155,13 @@ export default function EditArtikelPage() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function EditArtikelPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-xs text-stone-500">Memuat halaman edit artikel...</div>}>
+      <EditArtikelContent />
+    </Suspense>
   );
 }
