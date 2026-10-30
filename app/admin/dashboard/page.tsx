@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import { FileText, Plus, Edit, Trash2, GraduationCap, Users, ArrowUpRight } from "lucide-react";
+import { FileText, Plus, Edit, Trash2, GraduationCap, Users, ArrowUpRight, LayoutDashboard } from "lucide-react";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -19,7 +19,7 @@ export default function AdminDashboardPage() {
         const { data } = await supabase.from("articles").select("*").order("id", { ascending: false });
         if (data) setArticlesList(data);
       } catch (err) {
-        console.error("Gagal mengambil data articles:", err);
+        console.error("Gagal memuat artikel:", err);
       } finally {
         setLoading(false);
       }
@@ -28,7 +28,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus artikel ini dari tabel articles?")) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus artikel ini?")) return;
     const { error } = await supabase.from("articles").delete().eq("id", id);
     if (!error) {
       setArticlesList(articlesList.filter((a) => a.id !== id));
@@ -39,76 +39,79 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-100 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-[#2C1810] text-amber-100 p-6 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-md">
-          <div>
-            <h1 className="text-xl font-bold text-white">Portal Dashboard Admin</h1>
-            <p className="text-xs text-stone-300">Tersambung ke Supabase (prodi_profile, cabinets, members, articles)</p>
+    <div className="min-h-screen bg-stone-100 flex flex-col md:flex-row">
+      {/* Sidebar Fungsional Samping */}
+      <aside className="w-full md:w-64 bg-[#2C1810] text-amber-100 p-6 flex flex-col justify-between shrink-0 shadow-lg">
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 border-b border-amber-900/60 pb-4">
+            <div className="w-10 h-10 rounded-xl bg-amber-900/80 border border-amber-700/50 flex items-center justify-center font-bold text-white text-lg">
+              A
+            </div>
+            <div>
+              <h2 className="font-bold text-white text-sm">Admin Panel</h2>
+              <p className="text-[11px] text-amber-300/80">HIMAPEBSI & Prodi</p>
+            </div>
           </div>
+
+          <nav className="space-y-1.5 text-xs font-semibold">
+            <Link
+              href="/admin/dashboard"
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-amber-900/80 text-white shadow-2xs"
+            >
+              <LayoutDashboard className="w-4 h-4 text-amber-300" /> Dashboard Utama
+            </Link>
+            <Link
+              href="/admin/dashboard/profil-prodi"
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-stone-300 hover:bg-amber-900/40 hover:text-white transition-all"
+            >
+              <GraduationCap className="w-4 h-4 text-amber-400" /> Pengaturan Profil Prodi
+            </Link>
+            <Link
+              href="/admin/dashboard/profil-himpunan"
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-stone-300 hover:bg-amber-900/40 hover:text-white transition-all"
+            >
+              <Users className="w-4 h-4 text-amber-400" /> Kabinet & Pengurus
+            </Link>
+          </nav>
+        </div>
+
+        <div className="pt-6 border-t border-amber-900/60">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-900/60 hover:bg-amber-800 text-amber-200 text-xs font-semibold rounded-xl border border-amber-700/50 transition-all"
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-amber-900/60 hover:bg-amber-800 text-amber-200 rounded-xl text-xs font-semibold border border-amber-700/50 transition-all"
           >
-            <span>Lihat Website</span>
+            <span>Lihat Website Live</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
+      </aside>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link
-            href="/admin/dashboard/profil-prodi"
-            className="p-5 bg-white rounded-2xl border border-stone-200 shadow-2xs hover:shadow-md transition-all group flex items-start justify-between"
-          >
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 text-amber-900 font-bold text-sm">
-                <GraduationCap className="w-5 h-5 text-amber-800" />
-                Pengaturan prodi_profile
-              </div>
-              <p className="text-xs text-stone-500">Edit Sambutan Korprodi, Foto, Visi, Misi di tabel prodi_profile.</p>
-            </div>
-            <span className="text-xs font-bold text-amber-800 group-hover:translate-x-1 transition-transform">Kelola &rarr;</span>
-          </Link>
-
-          <Link
-            href="/admin/dashboard/profil-himpunan"
-            className="p-5 bg-white rounded-2xl border border-stone-200 shadow-2xs hover:shadow-md transition-all group flex items-start justify-between"
-          >
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 text-amber-900 font-bold text-sm">
-                <Users className="w-5 h-5 text-amber-800" />
-                Pengaturan cabinets & members
-              </div>
-              <p className="text-xs text-stone-500">Edit Periode, Visi Misi Kabinet, dan Anggota di Supabase.</p>
-            </div>
-            <span className="text-xs font-bold text-amber-800 group-hover:translate-x-1 transition-transform">Kelola &rarr;</span>
-          </Link>
-        </div>
-
+      {/* Konten Utama */}
+      <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto">
         <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b pb-4">
             <div>
-              <h2 className="text-base font-bold text-stone-900 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-amber-800" /> Kelola Artikel & Kegiatan (articles)
-              </h2>
-              <p className="text-xs text-stone-500">Total {articlesList.length} artikel terdaftar</p>
+              <h1 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-amber-800" /> Kelola Artikel & Kegiatan (articles)
+              </h1>
+              <p className="text-xs text-stone-500">Total {articlesList.length} artikel terdaftar secara real-time</p>
             </div>
             <Link
               href="/admin/dashboard/artikel/tambah"
-              className="px-4 py-2 bg-amber-900 hover:bg-amber-800 text-amber-100 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all"
+              className="px-4 py-2.5 bg-amber-900 hover:bg-amber-800 text-amber-100 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all"
             >
               <Plus className="w-4 h-4" /> Tambah Artikel Baru
             </Link>
           </div>
 
           {loading ? (
-            <div className="text-center py-8 text-xs text-stone-500">Memuat artikel...</div>
+            <div className="text-center py-12 text-xs text-stone-500">Memuat data artikel...</div>
           ) : articlesList.length === 0 ? (
-            <div className="text-center py-8 text-xs text-stone-500">Belum ada artikel di tabel articles.</div>
+            <div className="text-center py-12 text-xs text-stone-500">Belum ada artikel terdaftar di database Supabase.</div>
           ) : (
-            <div className="divide-y divide-stone-200 overflow-hidden">
+            <div className="divide-y divide-stone-200">
               {articlesList.map((item) => (
-                <div key={item.id} className="py-3 flex items-center justify-between gap-4">
+                <div key={item.id} className="py-4 flex items-center justify-between gap-4">
                   <div>
                     <span className="text-[10px] font-bold text-amber-800 uppercase bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                       {item.category || item.kategori || "Kegiatan"}
@@ -134,7 +137,7 @@ export default function AdminDashboardPage() {
             </div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
