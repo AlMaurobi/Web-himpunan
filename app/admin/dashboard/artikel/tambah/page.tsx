@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowLeft, Link as LinkIcon, Save } from "lucide-react";
+import { ArrowLeft, Save, PlusCircle } from "lucide-react";
 import Link from "next/link";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -12,60 +12,64 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function TambahArtikelPage() {
   const router = useRouter();
-  const [judul, setJudul] = useState("");
-  const [kategori, setKategori] = useState("Kegiatan");
-  const [posterUrl, setPosterUrl] = useState("");
-  const [tautanTerkait, setTautanTerkait] = useState("");
-  const [konten, setKonten] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Kegiatan");
+  const [imageUrl, setImageUrl] = useState("");
+  const [content, setContent] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (!title.trim() || !content.trim()) return alert("Judul dan Isi Artikel wajib diisi!");
 
-    const { error } = await supabase.from("artikel").insert([
-      {
-        judul,
-        kategori,
-        poster_url: posterUrl || null,
-        tautan_terkait: tautanTerkait || null,
-        konten,
-      },
-    ]);
+    setSaving(true);
 
-    setLoading(false);
+    const payload = {
+      title: title,
+      category: category,
+      image_url: imageUrl,
+      content: content,
+      created_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase.from("articles").insert([payload]);
+
+    setSaving(false);
 
     if (error) {
       alert("Gagal menambahkan artikel: " + error.message);
     } else {
-      alert("Artikel berhasil ditambahkan!");
-      router.push("/admin/dashboard");
+      alert("Artikel berhasil diterbitkan!");
+      router.push("/admin/dashboard/artikel");
       router.refresh();
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
       <div className="flex items-center justify-between">
         <Link
-          href="/admin/dashboard"
+          href="/admin/dashboard/artikel"
           className="inline-flex items-center gap-2 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white border border-stone-200 px-3 py-2 rounded-xl"
         >
-          <ArrowLeft className="w-4 h-4" /> Kembali ke Dashboard
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar Artikel
         </Link>
-        <h1 className="text-xl font-bold text-stone-900">Tambah Artikel Baru</h1>
+        <h1 className="text-base font-bold text-stone-900 flex items-center gap-2">
+          <PlusCircle className="w-5 h-5 text-amber-800" /> Buat Artikel / Berita Baru
+        </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-5">
         <div>
-          <label className="block text-xs font-bold text-stone-700 mb-1">Judul Artikel</label>
+          <label className="block text-xs font-bold text-stone-700 mb-1">Judul Artikel / Berita</label>
           <input
             type="text"
-            required
-            value={judul}
-            onChange={(e) => setJudul(e.target.value)}
-            placeholder="Masukkan judul artikel..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Masukkan judul artikel yang menarik..."
             className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
+            required
           />
         </div>
 
@@ -73,66 +77,48 @@ export default function TambahArtikelPage() {
           <div>
             <label className="block text-xs font-bold text-stone-700 mb-1">Kategori</label>
             <select
-              value={kategori}
-              onChange={(e) => setKategori(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-800"
             >
               <option value="Kegiatan">Kegiatan</option>
-              <option value="Pengumuman">Pengumuman</option>
+              <option value="Berita Prodi">Berita Prodi</option>
               <option value="Prestasi">Prestasi</option>
-              <option value="Opini & Karya">Opini & Karya</option>
+              <option value="Pengumuman">Pengumuman</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">URL Poster / Sampul</label>
+            <label className="block text-xs font-bold text-stone-700 mb-1">URL Gambar Sampul (Opsional)</label>
             <input
               type="url"
-              value={posterUrl}
-              onChange={(e) => setPosterUrl(e.target.value)}
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://..."
               className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
             />
           </div>
         </div>
 
-        {/* Panel Tautan Terkait / Lampiran Dokumen */}
-        <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200/80 space-y-2">
-          <label className="block text-xs font-bold text-amber-900 flex items-center gap-1.5">
-            <LinkIcon className="w-4 h-4 text-amber-700" />
-            Tautan Terkait / Lampiran Dokumen (Opsional)
-          </label>
-          <p className="text-[11px] text-stone-600">
-            Sematkan tautan Google Drive, berkas PDF, dokumen resmi, atau URL pendaftaran eksternal.
-          </p>
-          <input
-            type="url"
-            value={tautanTerkait}
-            onChange={(e) => setTautanTerkait(e.target.value)}
-            placeholder="https://drive.google.com/..."
-            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
-          />
-        </div>
-
         <div>
-          <label className="block text-xs font-bold text-stone-700 mb-1">Konten Artikel</label>
+          <label className="block text-xs font-bold text-stone-700 mb-1">Isi Berkas / Konten Artikel</label>
           <textarea
-            required
             rows={10}
-            value={konten}
-            onChange={(e) => setKonten(e.target.value)}
-            placeholder="Tuliskan isi artikel di sini..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Tuliskan berita secara rinci di sini..."
             className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
+            required
           ></textarea>
         </div>
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-amber-900 hover:bg-amber-800 text-amber-100 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+          disabled={saving}
+          className="w-full py-3 bg-amber-900 hover:bg-amber-800 text-amber-100 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
-          <span>{loading ? "Menyimpan..." : "Simpan & Terbitkan Artikel"}</span>
+          <span>{saving ? "Menerbitkan Artikel..." : "Terbitkan Artikel"}</span>
         </button>
       </form>
     </div>
