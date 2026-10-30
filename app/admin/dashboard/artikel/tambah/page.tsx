@@ -15,8 +15,8 @@ export default function TambahArtikelPage() {
   const [saving, setSaving] = useState(false);
 
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Kegiatan");
-  const [imageUrl, setImageUrl] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
   const [content, setContent] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,12 +25,18 @@ export default function TambahArtikelPage() {
 
     setSaving(true);
 
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Math.floor(Math.random() * 1000);
+    const autoExcerpt = excerpt.trim() || content.substring(0, 150) + "...";
+
     const payload = {
       title: title,
-      category: category,
-      image_url: imageUrl,
+      slug: slug,
+      excerpt: autoExcerpt,
       content: content,
+      cover_image_url: coverImageUrl || null,
+      status: "published",
       created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     const { error } = await supabase.from("articles").insert([payload]);
@@ -73,31 +79,26 @@ export default function TambahArtikelPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">Kategori</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-800"
-            >
-              <option value="Kegiatan">Kegiatan</option>
-              <option value="Berita Prodi">Berita Prodi</option>
-              <option value="Prestasi">Prestasi</option>
-              <option value="Pengumuman">Pengumuman</option>
-            </select>
-          </div>
+        <div>
+          <label className="block text-xs font-bold text-stone-700 mb-1">Ringkasan / Excerpt (Opsional)</label>
+          <input
+            type="text"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="Ringkasan singkat artikel..."
+            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
+          />
+        </div>
 
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">URL Gambar Sampul (Opsional)</label>
-            <input
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://..."
-              className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
-            />
-          </div>
+        <div>
+          <label className="block text-xs font-bold text-stone-700 mb-1">URL Gambar Sampul (cover_image_url)</label>
+          <input
+            type="url"
+            value={coverImageUrl}
+            onChange={(e) => setCoverImageUrl(e.target.value)}
+            placeholder="https://..."
+            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
+          />
         </div>
 
         <div>
