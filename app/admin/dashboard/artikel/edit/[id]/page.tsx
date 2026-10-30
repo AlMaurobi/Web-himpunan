@@ -6,8 +6,6 @@ import { createClient } from "@supabase/supabase-js";
 import { ArrowLeft, Save, Edit, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
