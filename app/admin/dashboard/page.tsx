@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-stone-100 flex flex-col md:flex-row">
-      {/* Sidebar Tunggal yang Bersih & Profesional */}
+      {/* Sidebar Tunggal Eksklusif Admin */}
       <aside className="w-full md:w-64 bg-[#2C1810] text-amber-100 p-6 flex flex-col justify-between shrink-0 shadow-lg">
         <div className="space-y-6">
           <div className="flex items-center gap-3 border-b border-amber-900/60 pb-4">
