@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import { GraduationCap, Target, Award, UserCheck, ArrowLeft, BookOpen, FileText, Loader2 } from "lucide-react";
+import { GraduationCap, Target, Award, UserCheck, ArrowLeft, BookOpen, Loader2 } from "lucide-react";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -16,16 +16,14 @@ export default function ProfilProdiPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const { data: prodi, error } = await supabase
-          .from("profil_prodi")
+        const { data: prodi } = await supabase
+          .from("prodi_profile")
           .select("*")
           .maybeSingle();
 
-        if (!error && prodi) {
-          setData(prodi);
-        }
+        if (prodi) setData(prodi);
       } catch (err) {
-        console.error("Gagal mengambil data profil prodi:", err);
+        console.error("Gagal mengambil data prodi_profile:", err);
       } finally {
         setLoading(false);
       }
@@ -33,12 +31,12 @@ export default function ProfilProdiPage() {
     loadData();
   }, []);
 
-  const judul = data?.judul_halaman || "Profil Pendidikan Bahasa & Sastra Indonesia";
-  const subjudul = data?.subjudul || "Fakultas Keguruan dan Ilmu Pendidikan — Universitas Trunojoyo Madura";
-  const korprodiNama = data?.nama_korprodi || "Koordinator Program Studi";
-  const korprodiJabatan = data?.jabatan_korprodi || "Prodi PBSI FKIP UTM";
-  const sambutan = data?.sambutan || "Selamat datang di laman resmi Program Studi Pendidikan Bahasa dan Sastra Indonesia (PBSI) Universitas Trunojoyo Madura. Kami berkomitmen menyelenggarakan pendidikan berkualitas, berorientasi kebudayaan, serta adaptif terhadap perkembangan zaman.";
-  const visi = data?.visi || '"Menjadi Program Studi Pendidikan Bahasa dan Sastra Indonesia yang unggul, berdaya saing nasional, serta berkarakter kebudayaan pada tahun 2030."';
+  const judul = data?.judul_halaman || data?.title || "Profil Pendidikan Bahasa & Sastra Indonesia";
+  const subjudul = data?.subjudul || data?.subtitle || "Fakultas Keguruan dan Ilmu Pendidikan — Universitas Trunojoyo Madura";
+  const korprodiNama = data?.nama_korprodi || data?.head_name || "Koordinator Program Studi";
+  const korprodiJabatan = data?.jabatan_korprodi || data?.head_title || "Prodi PBSI FKIP UTM";
+  const sambutan = data?.sambutan || data?.welcome_speech || data?.description || "Selamat datang di laman resmi Program Studi Pendidikan Bahasa dan Sastra Indonesia (PBSI) UTM.";
+  const visi = data?.visi || data?.vision || '"Menjadi Program Studi Pendidikan Bahasa dan Sastra Indonesia yang unggul, berdaya saing nasional, serta berkarakter kebudayaan pada tahun 2030."';
 
   let misiList: string[] = [
     "Menyelenggarakan pendidikan dan pembelajaran PBSI yang inovatif dan berbasis teknologi.",
@@ -47,11 +45,12 @@ export default function ProfilProdiPage() {
     "Menjalin kemitraan strategis dengan institusi pendidikan dan lembaga kebudayaan."
   ];
 
-  if (data?.misi) {
-    if (Array.isArray(data.misi)) {
-      misiList = data.misi;
-    } else if (typeof data.misi === "string") {
-      misiList = data.misi.split("\n").filter((m: string) => m.trim().length > 0);
+  const rawMisi = data?.misi || data?.mission;
+  if (rawMisi) {
+    if (Array.isArray(rawMisi)) {
+      misiList = rawMisi;
+    } else if (typeof rawMisi === "string") {
+      misiList = rawMisi.split("\n").filter((m: string) => m.trim().length > 0);
     }
   }
 
@@ -59,7 +58,7 @@ export default function ProfilProdiPage() {
     return (
       <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-stone-500 gap-3">
         <Loader2 className="w-8 h-8 animate-spin text-amber-800" />
-        <p className="text-xs font-semibold">Memuat data Profil Prodi dari Database...</p>
+        <p className="text-xs font-semibold">Memuat data prodi_profile dari Supabase...</p>
       </div>
     );
   }
@@ -74,46 +73,19 @@ export default function ProfilProdiPage() {
           <ArrowLeft className="w-4 h-4" /> Kembali ke Beranda
         </Link>
 
-        {/* Header Banner */}
         <div className="bg-[#2C1810] text-amber-100 p-8 rounded-3xl shadow-md border border-amber-900/40 space-y-3 relative overflow-hidden">
-          <div className="absolute -right-10 -bottom-10 opacity-10 text-amber-100 pointer-events-none">
-            <GraduationCap className="w-64 h-64" />
-          </div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-900/60 border border-amber-700/50 text-xs font-medium text-amber-300">
-            <GraduationCap className="w-4 h-4" /> Profil Resmi Program Studi
+            <GraduationCap className="w-4 h-4" /> Program Studi PBSI
           </div>
-          <h1 className="text-2xl md:text-4xl font-black text-white leading-tight">
-            {judul}
-          </h1>
-          <p className="text-xs md:text-sm text-stone-300 max-w-3xl leading-relaxed">
-            {subjudul}
-          </p>
+          <h1 className="text-2xl md:text-4xl font-black text-white leading-tight">{judul}</h1>
+          <p className="text-xs md:text-sm text-stone-300 max-w-3xl leading-relaxed">{subjudul}</p>
         </div>
 
-        {/* Akreditasi & Ringkasan jika diisi dari admin */}
-        {(data?.akreditasi || data?.sk_akreditasi) && (
-          <div className="bg-amber-900/5 border border-amber-800/20 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Award className="w-6 h-6 text-amber-800 shrink-0" />
-              <div>
-                <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Status Akreditasi</span>
-                <span className="text-sm font-black text-stone-900">{data.akreditasi || "Terakreditasi"}</span>
-              </div>
-            </div>
-            {data.sk_akreditasi && (
-              <span className="text-xs text-stone-600 bg-white px-3 py-1.5 rounded-lg border border-stone-200 font-mono">
-                SK: {data.sk_akreditasi}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Sambutan Korprodi */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-stone-200 shadow-2xs grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           <div className="flex flex-col items-center text-center space-y-3 border-b md:border-b-0 md:border-r border-stone-200 pb-6 md:pb-0 md:pr-6">
             <div className="w-28 h-28 rounded-full bg-amber-100 border-2 border-amber-800 flex items-center justify-center text-amber-900 font-bold text-2xl overflow-hidden shadow-inner">
-              {data?.foto_korprodi ? (
-                <img src={data.foto_korprodi} alt={korprodiNama} className="w-full h-full object-cover" />
+              {data?.foto_korprodi || data?.head_image ? (
+                <img src={data.foto_korprodi || data.head_image} alt={korprodiNama} className="w-full h-full object-cover" />
               ) : (
                 <GraduationCap className="w-12 h-12 text-amber-900/60" />
               )}
@@ -128,30 +100,23 @@ export default function ProfilProdiPage() {
               <UserCheck className="w-5 h-5 text-amber-800" />
               Sambutan Koordinator Program Studi
             </h2>
-            <p className="text-xs md:text-sm text-stone-600 leading-relaxed whitespace-pre-line">
-              {sambutan}
-            </p>
+            <p className="text-xs md:text-sm text-stone-600 leading-relaxed whitespace-pre-line">{sambutan}</p>
           </div>
         </div>
 
-        {/* Visi & Misi */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-3 flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 text-amber-900 font-bold text-sm">
-                <Target className="w-4 h-4 text-amber-800" />
-                Visi Program Studi
-              </div>
-              <p className="text-xs md:text-sm text-stone-800 leading-relaxed bg-amber-50/60 p-4 rounded-xl border border-amber-200/80 font-medium italic">
-                {visi}
-              </p>
+          <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-3">
+            <div className="inline-flex items-center gap-2 text-amber-900 font-bold text-sm">
+              <Target className="w-4 h-4 text-amber-800" /> Visi Program Studi
             </div>
+            <p className="text-xs md:text-sm text-stone-800 leading-relaxed bg-amber-50/60 p-4 rounded-xl border border-amber-200/80 font-medium italic">
+              {visi}
+            </p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-3">
             <div className="inline-flex items-center gap-2 text-amber-900 font-bold text-sm">
-              <BookOpen className="w-4 h-4 text-amber-800" />
-              Misi Program Studi
+              <BookOpen className="w-4 h-4 text-amber-800" /> Misi Program Studi
             </div>
             <ul className="text-xs md:text-sm text-stone-700 space-y-2.5 pl-1 leading-relaxed">
               {misiList.map((item, idx) => (
@@ -165,19 +130,6 @@ export default function ProfilProdiPage() {
             </ul>
           </div>
         </div>
-
-        {/* Sejarah & Deskripsi Tambahan jika ada di database */}
-        {data?.sejarah && (
-          <div className="bg-white p-6 md:p-8 rounded-2xl border border-stone-200 shadow-2xs space-y-3">
-            <h2 className="text-base font-bold text-stone-900 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-amber-800" />
-              Sejarah & Latar Belakang
-            </h2>
-            <p className="text-xs md:text-sm text-stone-600 leading-relaxed whitespace-pre-line">
-              {data.sejarah}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
