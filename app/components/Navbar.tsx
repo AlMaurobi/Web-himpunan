@@ -1,85 +1,102 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X, ShieldCheck } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X, GraduationCap, Users, Newspaper, Home, Lock } from "lucide-react";
 
 export default function Navbar() {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
+  // Sembunyikan Navbar di halaman admin
+  if (pathname?.startsWith("/admin")) return null;
+
+  const navItems = [
+    { name: "Beranda", href: "/", icon: Home },
+    { name: "Profil Prodi", href: "/prodi", icon: GraduationCap },
+    { name: "Profil Himpunan", href: "/himpunan", icon: Users },
+    { name: "Berita & Artikel", href: "/berita", icon: Newspaper },
+  ];
 
   return (
-    <nav className="bg-[#2C1810] text-amber-100 sticky top-0 z-50 shadow-md border-b border-amber-900/40">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-[#2A1810] text-amber-100 sticky top-0 z-50 shadow-md border-b border-amber-900/40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo HIMAPEBSI" className="w-9 h-9 object-contain" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-amber-100 font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+              H
+            </div>
             <div>
-              <span className="font-extrabold text-sm tracking-wide block leading-tight text-white">HIMAPEBSI</span>
-              <span className="text-[10px] text-amber-400 block font-light">Pendidikan Bahasa & Sastra Indonesia</span>
+              <span className="font-bold text-white tracking-wide block text-sm sm:text-base">HIMAPEBSI</span>
+              <span className="text-[10px] text-amber-300/80 block -mt-1">UTM Madura</span>
             </div>
           </Link>
 
-          {/* Navigasi Desktop */}
-          <div className="hidden md:flex items-center gap-6 text-xs font-semibold">
-            <Link href="/" className="hover:text-amber-400 transition-colors">
-              Beranda
-            </Link>
-            <Link href="/profil-prodi" className="hover:text-amber-400 transition-colors">
-              Profil Prodi
-            </Link>
-            <Link href="/profil-himpunan" className="hover:text-amber-400 transition-colors">
-              Profil Himpunan
-            </Link>
-            <Link href="/berita" className="hover:text-amber-400 transition-colors">
-              Berita & Kegiatan
-            </Link>
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all ${
+                    isActive
+                      ? "bg-amber-800/80 text-white shadow-2xs"
+                      : "text-amber-200/80 hover:text-white hover:bg-amber-900/50"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
             <Link
               href="/admin/login"
-              className="px-4 py-2 bg-amber-800 hover:bg-amber-700 text-amber-100 rounded-xl transition-all font-bold flex items-center gap-1.5 border border-amber-700/60 shadow-xs"
+              className="ml-2 px-3 py-1.5 bg-amber-900/40 hover:bg-amber-800 text-amber-300 text-xs font-medium rounded-lg border border-amber-800/50 flex items-center gap-1.5 transition-all"
             >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Portal Admin</span>
+              <Lock className="w-3.5 h-3.5" />
+              <span>Admin</span>
             </Link>
           </div>
 
-          {/* Tombol Mobile */}
-          <button
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg text-amber-200 hover:text-white"
-          >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg text-amber-200 hover:text-white hover:bg-amber-900/50 transition-colors"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Menu Mobile */}
       {isOpen && (
-        <div className="md:hidden bg-[#22120C] border-b border-amber-900/50 px-4 pt-2 pb-4 space-y-2 text-xs font-semibold">
-          <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
-            Beranda
-          </Link>
-          <Link href="/profil-prodi" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
-            Profil Prodi
-          </Link>
-          <Link href="/profil-himpunan" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
-            Profil Himpunan
-          </Link>
-          <Link href="/berita" onClick={() => setIsOpen(false)} className="block py-2 hover:text-amber-400">
-            Berita & Kegiatan
-          </Link>
+        <div className="md:hidden bg-[#2A1810] border-t border-amber-900/40 px-4 pt-2 pb-4 space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  isActive ? "bg-amber-800 text-white" : "text-amber-200 hover:bg-amber-900/50"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
           <Link
             href="/admin/login"
             onClick={() => setIsOpen(false)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-800 text-amber-100 rounded-xl font-bold mt-2"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-amber-300 bg-amber-950/60 border border-amber-900/50 mt-2"
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
+            <Lock className="w-4 h-4" />
             <span>Portal Admin</span>
           </Link>
         </div>

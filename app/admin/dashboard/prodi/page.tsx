@@ -1,200 +1,178 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { compressImage } from "@/lib/utils/image-compressor";
-import { Building2, Save, Loader2, Upload } from "lucide-react";
+import { ArrowLeft, Save, GraduationCap, Upload, Loader2 } from "lucide-react";
 
-export default function ProdiAdminPage() {
-  const [sejarah, setSejarah] = useState("");
-  const [visi, setVisi] = useState("");
-  const [misi, setMisi] = useState("");
-  const [akreditasi, setAkreditasi] = useState("Unggul");
-  const [namaKaprodi, setNamaKaprodi] = useState("");
-  const [fotoKaprodi, setFotoKaprodi] = useState<File | null>(null);
-  const [currentFotoUrl, setCurrentFotoUrl] = useState<string | null>(null);
-
-  const [loading, setLoading] = useState(false);
-  const [prodiId, setProdiId] = useState<string | null>(null);
-  const [msg, setMsg] = useState<string | null>(null);
+export default function AdminProdiPage() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    id: 1,
+    sejarah: "",
+    visi: "",
+    misi: "",
+    akreditasi: "A",
+    nama_kaprodi: "",
+    foto_kaprodi_url: "",
+  });
 
   const supabase = createClient();
 
   useEffect(() => {
-    loadProdiData();
+    async function fetchProdi() {
+      try {
+        const { data, error } = await supabase
+          .from("prodi_profile")
+          .select("*")
+          .single();
+
+        if (data && !error) {
+          setFormData({
+            id: data.id || 1,
+            sejarah: data.sejarah || "",
+            visi: data.visi || "",
+            misi: data.misi || "",
+            akreditasi: data.akreditasi || "A",
+            nama_kaprodi: data.nama_kaprodi || "",
+            foto_kaprodi_url: data.foto_kaprodi_url || "",
+          });
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data prodi:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProdi();
   }, []);
 
-  async function loadProdiData() {
-    const { data } = await supabase.from("prodi_profile").select("*").limit(1).single();
-    if (data) {
-      setProdiId(data.id);
-      setSejarah(data.sejarah || "");
-      setVisi(data.visi || "");
-      setMisi(Array.isArray(data.misi) ? data.misi.join("\n") : "");
-      setAkreditasi(data.akreditasi || "Unggul");
-      setNamaKaprodi(data.nama_kaprodi || "");
-      setCurrentFotoUrl(data.foto_kaprodi_url || null);
-    }
-  }
-
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMsg(null);
-
+    setSaving(true);
     try {
-      let fotoUrl = currentFotoUrl;
+      const { error } = await supabase
+        .from("prodi_profile")
+        .upsert(formData);
 
-      if (fotoKaprodi) {
-        const compressed = await compressImage(fotoKaprodi);
-        const fileName = `kaprodi-${Date.now()}.webp`;
-        const { error: uploadErr } = await supabase.storage.from("members").upload(fileName, compressed, {
-          contentType: "image/webp",
-        });
-        if (uploadErr) throw uploadErr;
-        const { data } = supabase.storage.from("members").getPublicUrl(fileName);
-        fotoUrl = data.publicUrl;
-      }
-
-      const misiArray = misi.split("\n").filter((m) => m.trim() !== "");
-
-      if (prodiId) {
-        const { error } = await supabase.from("prodi_profile").update({
-          sejarah,
-          visi,
-          misi: misiArray,
-          akreditasi,
-          nama_kaprodi: namaKaprodi,
-          foto_kaprodi_url: fotoUrl,
-        }).eq("id", prodiId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("prodi_profile").insert({
-          sejarah,
-          visi,
-          misi: misiArray,
-          akreditasi,
-          nama_kaprodi: namaKaprodi,
-          foto_kaprodi_url: fotoUrl,
-        });
-        if (error) throw error;
-      }
-
-      setMsg("Data profil prodi berhasil diperbarui!");
-      loadProdiData();
+      if (error) throw error;
+      alert("Profil Prodi berhasil diperbarui!");
     } catch (err: any) {
-      setMsg(`Gagal menyimpan data: ${err.message}`);
+      alert("Gagal menyimpan: " + err.message);
+    } finally {
+      setSaving(false);
     }
-    setLoading(false);
   };
 
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-6 h-6 animate-spin text-amber-800" />
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-stone-900 flex items-center gap-2">
-          <Building2 className="w-6 h-6 text-amber-800" />
-          <span>Kelola Profil Program Studi</span>
-        </h1>
-        <p className="text-stone-600 text-sm mt-1">
-          Perbarui informasi resmi Program Studi (Sejarah, Visi-Misi, Akreditasi, dan Kaprodi)
-        </p>
+    <main className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <Link
+          href="/admin/dashboard"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-amber-800 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Dashboard
+        </Link>
+        <span className="text-xs font-bold bg-amber-100 text-amber-900 px-3 py-1 rounded-full border border-amber-200">
+          Tabel: prodi_profile
+        </span>
       </div>
 
-      {msg && (
-        <div className="p-4 bg-emerald-100 border border-emerald-300 text-emerald-800 text-sm rounded-xl font-medium">
-          {msg}
+      <div className="bg-white p-6 md:p-8 rounded-2xl border border-stone-200 shadow-2xs space-y-6">
+        <div className="border-b pb-4">
+          <h1 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-amber-800" /> Kelola Profil Prodi PBSI
+          </h1>
+          <p className="text-xs text-stone-500">Perbarui informasi sejarah, visi misi, dan profil Kaprodi.</p>
         </div>
-      )}
 
-      <form onSubmit={handleSave} className="bg-white border border-stone-200/80 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-stone-700 mb-1">Nama Kaprodi / Korprodi</label>
+              <input
+                type="text"
+                value={formData.nama_kaprodi}
+                onChange={(e) => setFormData({ ...formData, nama_kaprodi: e.target.value })}
+                className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+                placeholder="Contoh: Dr. Nama Kaprodi, M.Pd."
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-stone-700 mb-1">Akreditasi Prodi</label>
+              <input
+                type="text"
+                value={formData.akreditasi}
+                onChange={(e) => setFormData({ ...formData, akreditasi: e.target.value })}
+                className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+                placeholder="Unggul / A / Baik Sekali"
+              />
+            </div>
+          </div>
+
           <div>
-            <label className="block text-sm font-semibold text-stone-700 mb-2">Nama Kepala Program Studi (Kaprodi)</label>
+            <label className="block text-xs font-bold text-stone-700 mb-1">URL Foto Kaprodi</label>
             <input
               type="text"
-              required
-              value={namaKaprodi}
-              onChange={(e) => setNamaKaprodi(e.target.value)}
-              placeholder="misal: Dr. Nama Kaprodi, M.Pd."
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent transition-all"
+              value={formData.foto_kaprodi_url}
+              onChange={(e) => setFormData({ ...formData, foto_kaprodi_url: e.target.value })}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+              placeholder="https://..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-stone-700 mb-2">Akreditasi Prodi</label>
-            <select
-              value={akreditasi}
-              onChange={(e) => setAkreditasi(e.target.value)}
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent transition-all"
-            >
-              <option value="Unggul">Unggul</option>
-              <option value="A">A</option>
-              <option value="Baik Sekali">Baik Sekali</option>
-              <option value="B">B</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-stone-700 mb-2">Foto Resmi Kaprodi</label>
-          <div className="flex items-center gap-4">
-            {currentFotoUrl && (
-              <img src={currentFotoUrl} alt="Foto Kaprodi" className="w-16 h-16 rounded-xl object-cover border border-stone-300 shadow-sm" />
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFotoKaprodi(e.target.files?.[0] || null)}
-              className="text-xs text-stone-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-900 hover:file:bg-amber-200 cursor-pointer"
+            <label className="block text-xs font-bold text-stone-700 mb-1">Sejarah Singkat Prodi</label>
+            <textarea
+              rows={4}
+              value={formData.sejarah}
+              onChange={(e) => setFormData({ ...formData, sejarah: e.target.value })}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+              placeholder="Tuliskan sejarah prodi..."
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-stone-700 mb-2">Sejarah Singkat Prodi</label>
-          <textarea
-            required
-            rows={3}
-            value={sejarah}
-            onChange={(e) => setSejarah(e.target.value)}
-            placeholder="Tuliskan latar belakang singkat berdirinya program studi..."
-            className="w-full px-4 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent transition-all"
-          />
-        </div>
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Visi Prodi</label>
+            <textarea
+              rows={3}
+              value={formData.visi}
+              onChange={(e) => setFormData({ ...formData, visi: e.target.value })}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+              placeholder="Tuliskan visi..."
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-stone-700 mb-2">Visi Program Studi</label>
-          <textarea
-            required
-            rows={2}
-            value={visi}
-            onChange={(e) => setVisi(e.target.value)}
-            placeholder="Visi prodi..."
-            className="w-full px-4 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent transition-all"
-          />
-        </div>
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Misi Prodi</label>
+            <textarea
+              rows={4}
+              value={formData.misi}
+              onChange={(e) => setFormData({ ...formData, misi: e.target.value })}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+              placeholder="Tuliskan misi..."
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-stone-700 mb-2">Misi Program Studi (1 Poin Per Baris)</label>
-          <textarea
-            required
-            rows={5}
-            value={misi}
-            onChange={(e) => setMisi(e.target.value)}
-            placeholder="Pisahkan setiap poin misi dengan menekan Enter (baris baru)"
-            className="w-full px-4 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent transition-all"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-amber-800 hover:bg-amber-900 disabled:bg-amber-800/50 text-amber-50 font-semibold rounded-xl shadow-md shadow-amber-950/20 transition-all flex items-center justify-center gap-2 text-sm"
-        >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-          <span>Simpan Perubahan Profil Prodi</span>
-        </button>
-      </form>
-    </div>
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full py-2.5 bg-amber-900 hover:bg-amber-800 text-amber-100 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            <span>Simpan Perubahan Profil Prodi</span>
+          </button>
+        </form>
+      </div>
+    </main>
   );
 }

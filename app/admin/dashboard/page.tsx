@@ -1,22 +1,22 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/client";
 import { FileText, Plus, Edit, Trash2, GraduationCap, Users, ArrowUpRight } from "lucide-react";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function AdminDashboardPage() {
   const [articlesList, setArticlesList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const { data } = await supabase.from("articles").select("*").order("id", { ascending: false });
+        const { data } = await supabase
+          .from("articles")
+          .select("*")
+          .order("id", { ascending: false });
         if (data) setArticlesList(data);
       } catch (err) {
         console.error("Gagal memuat artikel:", err);
@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link
-          href="/admin/dashboard/profil-prodi"
+          href="/admin/dashboard/prodi"
           className="p-5 bg-white rounded-2xl border border-stone-200 shadow-2xs hover:shadow-md transition-all group flex items-start justify-between"
         >
           <div className="space-y-1">
@@ -70,7 +70,7 @@ export default function AdminDashboardPage() {
         </Link>
 
         <Link
-          href="/admin/dashboard/profil-himpunan"
+          href="/admin/dashboard/kabinet"
           className="p-5 bg-white rounded-2xl border border-stone-200 shadow-2xs hover:shadow-md transition-all group flex items-start justify-between"
         >
           <div className="space-y-1">

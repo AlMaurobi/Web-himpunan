@@ -1,165 +1,243 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
-import { ArrowLeft, Save, Edit, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/utils/image-compressor";
+import { ArrowLeft, Save, Loader2, FileText } from "lucide-react";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-function EditArtikelContent() {
-  const router = useRouter();
+function EditArtikelForm() {
   const params = useParams();
   const id = params?.id as string;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
-  const [coverImageUrl, setCoverImageUrl] = useState("");
   const [content, setContent] = useState("");
+  const [status, setStatus] = useState<"draft" | "published">("published");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [newCoverFile, setNewCoverFile] = useState<File | null>(null);
+
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     if (!id) return;
+    async function fetchArticle() {
+      try {
+        const { data, error } = await supabase
+          .from("articles")
+          .select("*")
+          .eq("id", id)
+          .single();
 
-    async function fetchDetail() {
-      const { data } = await supabase.from("articles").select("*").eq("id", id).maybeSingle();
-
-      if (data) {
-        setTitle(data.title || "");
-        setExcerpt(data.excerpt || "");
-        setCoverImageUrl(data.cover_image_url || "");
-        setContent(data.content || "");
-      } else {
-        alert("Artikel tidak ditemukan di database!");
-        router.push("/admin/dashboard/artikel");
+        if (error) throw error;
+        if (data) {
+          setTitle(data.title || "");
+          setSlug(data.slug || "");
+          setExcerpt(data.excerpt || "");
+          setContent(data.content || "");
+          setStatus(data.status || "published");
+          setCoverImageUrl(data.cover_image_url || "");
+        }
+      } catch (err: any) {
+        alert("Gagal memuat artikel: " + err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
+    fetchArticle();
+  }, [id]);
 
-    fetchDetail();
-  }, [id, router]);
-
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return alert("Judul dan Isi Artikel wajib diisi!");
-
+    if (!id) return;
     setSaving(true);
 
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const autoExcerpt = excerpt.trim() || content.substring(0, 150) + "...";
+    try {
+      let finalCoverUrl = coverImageUrl;
 
-    const payload = {
-      title: title,
-      slug: slug,
-      excerpt: autoExcerpt,
-      content: content,
-      cover_image_url: coverImageUrl || null,
-      updated_at: new Date().toISOString(),
-    };
+      if (newCoverFile) {
+        setUploading(true);
+        const compressedBlob = await compressImage(newCoverFile);
+        const fileName = `article-${Date.now()}.webp`;
 
-    const { error } = await supabase.from("articles").update(payload).eq("id", id);
+        const { error: uploadError } = await supabase.storage
+          .from("posters")
+          .upload(fileName, compressedBlob, {
+            contentType: "image/webp",
+            upsert: true,
+          });
 
-    setSaving(false);
+        if (uploadError) throw uploadError;
 
-    if (error) {
-      alert("Gagal memperbarui artikel: " + error.message);
-    } else {
+        const { data: publicUrlData } = supabase.storage
+          .from("posters")
+          .getPublicUrl(fileName);
+
+        finalCoverUrl = publicUrlData.publicUrl;
+      }
+
+      const { error } = await supabase
+        .from("articles")
+        .update({
+          title,
+          slug,
+          excerpt,
+          content,
+          cover_image_url: finalCoverUrl,
+          status,
+          published_at: status === "published" ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
       alert("Artikel berhasil diperbarui!");
       router.push("/admin/dashboard/artikel");
       router.refresh();
+    } catch (err: any) {
+      alert("Gagal memperbarui artikel: " + err.message);
+    } finally {
+      setSaving(false);
+      setUploading(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-500 gap-2">
-        <Loader2 className="w-5 h-5 animate-spin text-amber-800" />
-        <span className="text-xs font-semibold">Memuat data artikel...</span>
+      <div className="p-8 flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-6 h-6 animate-spin text-amber-800" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
+    <main className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <Link
           href="/admin/dashboard/artikel"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white border border-stone-200 px-3 py-2 rounded-xl"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-amber-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar Artikel
         </Link>
-        <h1 className="text-base font-bold text-stone-900 flex items-center gap-2">
-          <Edit className="w-5 h-5 text-amber-800" /> Edit Artikel
-        </h1>
       </div>
 
-      <form onSubmit={handleUpdate} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-5">
-        <div>
-          <label className="block text-xs font-bold text-stone-700 mb-1">Judul Artikel / Berita</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
-            required
-          />
+      <div className="bg-white p-6 md:p-8 rounded-2xl border border-stone-200 shadow-2xs space-y-6">
+        <div className="border-b pb-4">
+          <h1 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-amber-800" /> Edit Artikel
+          </h1>
         </div>
 
-        <div>
-          <label className="block text-xs font-bold text-stone-700 mb-1">Ringkasan / Excerpt (Opsional)</label>
-          <input
-            type="text"
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
-            placeholder="Ringkasan singkat artikel..."
-            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Judul Artikel</label>
+            <input
+              type="text"
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-bold text-stone-700 mb-1">URL Gambar Sampul (cover_image_url)</label>
-          <input
-            type="url"
-            value={coverImageUrl}
-            onChange={(e) => setCoverImageUrl(e.target.value)}
-            placeholder="https://..."
-            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
-          />
-        </div>
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Slug URL</label>
+            <input
+              type="text"
+              required
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl bg-stone-50 font-mono focus:ring-2 focus:ring-amber-800 focus:outline-none"
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-bold text-stone-700 mb-1">Isi Berkas / Konten Artikel</label>
-          <textarea
-            rows={10}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800"
-            required
-          ></textarea>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-stone-700 mb-1">Status Publikasi</label>
+              <select
+                value={status}
+                onChange={(e: any) => setStatus(e.target.value)}
+                className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+              >
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full py-3 bg-amber-900 hover:bg-amber-800 text-amber-100 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          <span>{saving ? "Menyimpan Perubahan..." : "Simpan Perubahan Artikel"}</span>
-        </button>
-      </form>
-    </div>
+            <div>
+              <label className="block text-xs font-bold text-stone-700 mb-1">Ganti Foto Cover (Optional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => e.target.files && setNewCoverFile(e.target.files[0])}
+                className="w-full text-xs text-stone-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-900 hover:file:bg-amber-200"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Ringkasan (Excerpt)</label>
+            <textarea
+              rows={2}
+              required
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">Isi Konten Lengkap</label>
+            <textarea
+              rows={8}
+              required
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full px-3.5 py-2 text-xs border border-stone-300 rounded-xl focus:ring-2 focus:ring-amber-800 focus:outline-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full py-2.5 bg-amber-900 hover:bg-amber-800 text-amber-100 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>{uploading ? "Mengompresi Gambar..." : "Memperbarui..."}</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Simpan Perubahan</span>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </main>
   );
 }
 
 export default function EditArtikelPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-xs text-stone-500">Memuat halaman edit artikel...</div>}>
-      <EditArtikelContent />
+    <Suspense
+      fallback={
+        <div className="p-8 flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-6 h-6 animate-spin text-amber-800" />
+        </div>
+      }
+    >
+      <EditArtikelForm />
     </Suspense>
   );
 }
