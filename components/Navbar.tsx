@@ -9,7 +9,6 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Sembunyikan Navbar di halaman admin
   if (pathname?.startsWith("/admin")) return null;
 
   const navLinks = [
@@ -23,15 +22,11 @@ export default function Navbar() {
     <header className="bg-[#2A1810] text-amber-100 sticky top-0 z-50 shadow-md border-b border-amber-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Logo HIMAPEBSI */}
           <Link href="/" className="flex items-center gap-3 group">
             <img
               src="/logo.png"
               alt="Logo HIMAPEBSI"
               className="w-10 h-10 object-contain shrink-0 group-hover:scale-105 transition-transform"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "/logo-hima.png";
-              }}
             />
             <div>
               <span className="font-bold text-white text-base leading-tight block tracking-wide">
@@ -43,7 +38,6 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-1.5">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -64,7 +58,6 @@ export default function Navbar() {
               );
             })}
 
-            {/* Tombol Portal Admin */}
             <Link
               href="/admin/login"
               className="ml-2 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-amber-600/50 text-amber-200 hover:text-white hover:bg-amber-800/40 text-xs font-semibold transition-all"
@@ -74,7 +67,6 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Mobile Hamburger Toggle */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -87,7 +79,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
       {isOpen && (
         <div className="md:hidden bg-[#2A1810] border-t border-amber-900/50 px-4 pt-2 pb-4 space-y-1">
           {navLinks.map((link) => {

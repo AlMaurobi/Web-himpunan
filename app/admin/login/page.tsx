@@ -25,9 +25,7 @@ export default function AdminLoginPage() {
         password,
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (data.session) {
         router.push("/admin/dashboard");
@@ -45,7 +43,6 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-[#1F120B] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-amber-900/20">
-        {/* Header Login */}
         <div className="bg-[#2A1810] p-6 text-center text-amber-100 relative">
           <Link
             href="/"
@@ -54,9 +51,11 @@ export default function AdminLoginPage() {
             <ArrowLeft className="w-4 h-4" />
             <span>Web Utama</span>
           </Link>
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-bold text-xl mx-auto mb-3 shadow-md">
-            H
-          </div>
+          <img
+            src="/logo.png"
+            alt="Logo HIMAPEBSI"
+            className="w-12 h-12 object-contain mx-auto mb-3"
+          />
           <h1 className="text-xl font-bold text-white tracking-wide">
             Portal Admin HIMAPEBSI
           </h1>
@@ -65,7 +64,6 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
-        {/* Form Body */}
         <div className="p-6 md:p-8 space-y-6">
           {errorMsg && (
             <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium flex items-center gap-2">
