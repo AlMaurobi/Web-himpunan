@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import ShareButton from "@/components/ShareButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function DetailBeritaPage({
   params,
 }: {
