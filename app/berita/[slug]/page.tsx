@@ -27,8 +27,11 @@ async function ArticleContent({ slug }: { slug: string }) {
     day: "numeric",
   });
 
+  const imageUrl = article.cover_url || article.image_url || article.cover;
+
   return (
     <div className="space-y-6">
+      {/* Navigasi Kembali */}
       <div className="flex items-center justify-between">
         <Link
           href="/berita"
@@ -37,9 +40,9 @@ async function ArticleContent({ slug }: { slug: string }) {
           <ArrowLeft className="w-4 h-4" />
           <span>Kembalikan ke Daftar Berita</span>
         </Link>
-        <ShareButton title={article.title} slug={article.slug} />
       </div>
 
+      {/* Header Metadata */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-3 text-xs text-stone-500">
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-900 rounded-full font-bold">
@@ -57,22 +60,25 @@ async function ArticleContent({ slug }: { slug: string }) {
         </h1>
       </div>
 
-      {article.cover_url && (
-        <div className="rounded-3xl overflow-hidden border border-stone-200 shadow-md">
+      {/* Cover / Banner Gambar Artikel */}
+      {imageUrl && (
+        <div className="rounded-3xl overflow-hidden border border-stone-200 shadow-md bg-stone-100">
           <img
-            src={article.cover_url}
+            src={imageUrl}
             alt={article.title}
-            className="w-full max-h-[480px] object-cover"
+            className="w-full max-h-[500px] object-cover mx-auto"
           />
         </div>
       )}
 
+      {/* Isi Konten Artikel */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/80 shadow-xs space-y-6">
         <div className="prose prose-stone max-w-none text-stone-700 text-sm sm:text-base leading-relaxed whitespace-pre-line">
           {article.content}
         </div>
 
-        <div className="pt-6 border-t border-stone-100 flex items-center justify-between">
+        {/* Tombol Bagikan Tunggal di Bagian Bawah */}
+        <div className="pt-6 border-t border-stone-100 flex items-center justify-between flex-wrap gap-3">
           <span className="text-xs font-medium text-stone-500">
             Sukai atau bagikan berita ini kepada rekan civitas akademika:
           </span>
