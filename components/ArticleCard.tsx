@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
@@ -38,7 +38,7 @@ export default function ArticleCard({ article }: { article: Article }) {
         </div>
       </div>
 
-      <div className="p-4 pt-0 flex items-center justify-between border-t border-stone-100 mt-2">
+      <div className="p-4 pt-0 flex items-center justify-between border-t border-stone-100 mt-3">
         <Link
           href={`/berita/${article.slug}`}
           className="text-xs font-bold text-amber-900 hover:underline inline-flex items-center gap-1"
