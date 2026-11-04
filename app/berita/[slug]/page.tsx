@@ -2,15 +2,15 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
+import { connection } from "next/server";
 import ShareButton from "@/components/ShareButton";
-
-export const dynamic = "force-dynamic";
 
 export default async function DetailBeritaPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
   const supabase = await createClient();
 
