@@ -27,7 +27,13 @@ async function ArticleContent({ slug }: { slug: string }) {
     day: "numeric",
   });
 
-  const imageUrl = article.cover_url || article.image_url || article.cover;
+  // Deteksi kolom gambar fleksibel dari database
+  const imageUrl =
+    article.cover_url ||
+    article.image_url ||
+    article.cover ||
+    article.poster_url ||
+    article.image;
 
   return (
     <div className="space-y-6">
@@ -60,7 +66,7 @@ async function ArticleContent({ slug }: { slug: string }) {
         </h1>
       </div>
 
-      {/* Cover / Banner Gambar Artikel */}
+      {/* Banner / Cover Gambar Kegiatan Artikel */}
       {imageUrl && (
         <div className="rounded-3xl overflow-hidden border border-stone-200 shadow-md bg-stone-100">
           <img
@@ -77,7 +83,7 @@ async function ArticleContent({ slug }: { slug: string }) {
           {article.content}
         </div>
 
-        {/* Tombol Bagikan Tunggal di Bagian Bawah */}
+        {/* Tombol Bagikan Tunggal */}
         <div className="pt-6 border-t border-stone-100 flex items-center justify-between flex-wrap gap-3">
           <span className="text-xs font-medium text-stone-500">
             Sukai atau bagikan berita ini kepada rekan civitas akademika:
