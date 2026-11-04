@@ -27,17 +27,8 @@ async function ArticleContent({ slug }: { slug: string }) {
     day: "numeric",
   });
 
-  // Deteksi kolom gambar fleksibel dari database
-  const imageUrl =
-    article.cover_url ||
-    article.image_url ||
-    article.cover ||
-    article.poster_url ||
-    article.image;
-
   return (
     <div className="space-y-6">
-      {/* Navigasi Kembali */}
       <div className="flex items-center justify-between">
         <Link
           href="/berita"
@@ -48,7 +39,6 @@ async function ArticleContent({ slug }: { slug: string }) {
         </Link>
       </div>
 
-      {/* Header Metadata */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-3 text-xs text-stone-500">
           <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-900 rounded-full font-bold">
@@ -66,24 +56,21 @@ async function ArticleContent({ slug }: { slug: string }) {
         </h1>
       </div>
 
-      {/* Banner / Cover Gambar Kegiatan Artikel */}
-      {imageUrl && (
+      {article.cover_image_url && (
         <div className="rounded-3xl overflow-hidden border border-stone-200 shadow-md bg-stone-100">
           <img
-            src={imageUrl}
+            src={article.cover_image_url}
             alt={article.title}
-            className="w-full max-h-[500px] object-cover mx-auto"
+            className="w-full max-h-[500px] object-cover mx-auto block"
           />
         </div>
       )}
 
-      {/* Isi Konten Artikel */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/80 shadow-xs space-y-6">
         <div className="prose prose-stone max-w-none text-stone-700 text-sm sm:text-base leading-relaxed whitespace-pre-line">
           {article.content}
         </div>
 
-        {/* Tombol Bagikan Tunggal */}
         <div className="pt-6 border-t border-stone-100 flex items-center justify-between flex-wrap gap-3">
           <span className="text-xs font-medium text-stone-500">
             Sukai atau bagikan berita ini kepada rekan civitas akademika:

@@ -8,28 +8,24 @@ interface Article {
   title: string;
   slug: string;
   excerpt?: string;
-  cover_url?: string;
-  image_url?: string;
-  cover?: string;
+  cover_image_url?: string;
   created_at: string;
 }
 
 export default function ArticleCard({ article }: { article: Article }) {
-  const imageUrl = article.cover_url || article.image_url || article.cover;
   const formattedDate = new Date(article.created_at).toLocaleDateString("id-ID");
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between">
       <div>
-        {imageUrl && (
+        {article.cover_image_url && (
           <img
-            src={imageUrl}
+            src={article.cover_image_url}
             alt={article.title}
             className="w-full h-48 object-cover"
           />
         )}
         <div className="p-4 space-y-3">
-          {/* Metadata Row: Kategori, Tanggal, dan Tombol Share (Area Lingkaran Merah) */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="inline-block px-2.5 py-1 bg-amber-100 text-amber-900 rounded-lg text-[10px] font-bold">
